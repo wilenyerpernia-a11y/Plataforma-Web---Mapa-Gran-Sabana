@@ -1,0 +1,339 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#111b16">
+  <meta name="description" content="Accede a tu membresía del mapa de la Gran Sabana de Zurita5ur.">
+  <title>Mi cuenta · Zurita5ur</title>
+  <link rel="icon" href="assets/zurita-logo.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700;800&family=DM+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/app.css">
+</head>
+<body class="account-page">
+  <header class="site-header">
+    <nav class="site-nav" aria-label="Navegación principal">
+      <a class="site-brand" href="index.html">
+        <img src="assets/zurita-logo.png" alt="">
+        <span><strong>ZURITA5UR</strong><small>Familia · ruta · conservación</small></span>
+      </a>
+      <div class="site-links" id="siteLinks">
+        <a href="historia.html">Nuestra historia</a>
+        <a href="conservacion.html">Conservación</a>
+        <a href="mapa.html">Mapa</a>
+        <a href="comunidad.html">Comunidad</a>
+        <a href="bitacora.html">Bitácora</a>
+        <a href="cuenta.html" aria-current="page">Mi cuenta</a>
+      </div>
+      <a class="ui-button" href="mapa.html">Explorar el mapa <span>↗</span></a>
+      <button class="nav-menu-button" id="navMenuButton" type="button" aria-label="Abrir menú" aria-controls="siteLinks" aria-expanded="false">☰</button>
+    </nav>
+  </header>
+
+  <main class="account-main">
+    <div class="account-intro">
+      <span class="page-kicker">Tu aventura, a tu ritmo</span>
+      <h1>Tu cuenta Zurita5ur.</h1>
+      <p>Consulta el estado de tu acceso, revisa tus solicitudes de pago y vuelve al mapa. En la web real, las cuentas y pagos se administrarán de forma segura; esta maqueta solo simula el recorrido.</p>
+    </div>
+
+    <section class="account-layout">
+      <div class="account-card login-view" id="loginView">
+        <span class="page-kicker">Área de clientes</span>
+        <h2>Inicia sesión para continuar.</h2>
+        <p>El equipo Zurita5ur crea las cuentas tras verificar el pago. No hay registro automático en el flujo real.</p>
+        <form id="loginForm">
+          <div class="login-fields">
+            <div class="field"><label for="email">CORREO ELECTRÓNICO</label><input id="email" name="email" type="email" placeholder="tu@correo.com" autocomplete="email" required></div>
+            <div class="field"><label for="password">CONTRASEÑA</label><input id="password" name="password" type="password" placeholder="Tu contraseña" autocomplete="current-password" required></div>
+          </div>
+          <div class="login-actions">
+            <button class="ui-button dark" type="submit">Entrar al panel <span>→</span></button>
+            <button class="ui-button outline" type="button" id="sampleLogin">Probar demo cliente</button>
+          </div>
+          <p class="field-message" id="loginMessage" aria-live="polite"></p>
+        </form>
+        <div class="demo-disclaimer"><strong>Modo demostración:</strong> cualquier correo válido y una contraseña de prueba abrirán un panel ficticio. No ingreses una contraseña real. La contraseña no se guarda; el correo y el estado de demo quedan solo en este navegador.</div>
+        <div class="account-access-links"><a href="mapa.html">Ver mapa público</a><a href="https://wa.me/584125580049?text=Hola%20Jairo%2C%20quiero%20informaci%C3%B3n%20sobre%20el%20acceso%20al%20mapa%20de%20la%20Gran%20Sabana." target="_blank" rel="noopener">Solicitar acceso por WhatsApp</a></div>
+      </div>
+
+      <div class="dashboard" id="dashboard">
+        <div class="dashboard-main">
+          <section class="account-card">
+            <div class="dashboard-header">
+              <div><span class="page-kicker">Hola, <span id="memberName">viajero</span></span><h2 style="margin-top:7px">Tu espacio de expedición.</h2><p id="memberEmail"></p></div>
+              <span class="member-badge" id="memberBadge">Acceso activo</span>
+            </div>
+            <div class="membership-card" style="margin-top:18px">
+              <small>MEMBRESÍA MAPA GRAN SABANA · DEMO</small>
+              <h3 id="memberHeading">Tu ruta sigue abierta.</h3>
+              <p id="memberSummary">Consulta el mapa y prepara tu próxima aventura.</p>
+              <div class="membership-meta">
+                <div><b id="daysLeft">90</b><span>días restantes</span></div>
+                <div><b id="expiryDate">—</b><span>fecha de vencimiento</span></div>
+                <div><b>$15</b><span>aporte total</span></div>
+              </div>
+              <div class="membership-progress">
+                <div class="membership-progress-label"><span>Tiempo de acceso restante</span><strong id="progressLabel">90 de 90 días</strong></div>
+                <div class="membership-progress-track" id="membershipProgress" role="progressbar" aria-label="Tiempo de acceso restante" aria-valuemin="0" aria-valuemax="90" aria-valuenow="90"><div class="membership-progress-fill" id="membershipProgressFill"></div></div>
+              </div>
+            </div>
+            <div class="dashboard-actions" style="margin-top:14px">
+              <a class="ui-button dark" id="openMemberMap" href="mapa.html">Abrir mapa <span>↗</span></a>
+              <button class="ui-button outline" type="button" id="showPaymentForm">Reportar un pago</button>
+              <button class="ui-button outline" type="button" id="simulateExpiry">Simular vencimiento</button>
+              <button class="ui-button outline" type="button" id="logout">Cerrar sesión</button>
+            </div>
+          </section>
+
+          <section class="account-card">
+            <div class="dashboard-header"><div><span class="page-kicker">Historial de pagos</span><h2 style="margin-top:7px">Tus movimientos.</h2></div><span style="color:#788278;font-size:9px">USD · demo</span></div>
+            <p>Las solicitudes se verifican manualmente antes de activar o renovar una membresía.</p>
+            <div id="paymentHistory"></div>
+            <form class="payment-form" id="paymentForm">
+              <div class="field"><label for="paymentMethod">MEDIO DE PAGO</label><select id="paymentMethod" required><option value="">Selecciona un medio</option><option>Pago móvil</option><option>USDT</option><option>Otro</option></select></div>
+              <div class="field"><label for="paymentReference">REFERENCIA O NOTA</label><textarea id="paymentReference" maxlength="120" placeholder="Añade una referencia de prueba (no compartas datos bancarios)"></textarea></div>
+              <button class="ui-button dark" type="submit">Registrar solicitud demo</button>
+              <p class="demo-disclaimer" style="margin:0;padding:0;border:0">Este registro solo se guarda en tu navegador y queda como pendiente. No confirma el pago ni renueva el acceso.</p>
+            </form>
+          </section>
+        </div>
+
+        <aside class="account-card help-card">
+          <div><span class="page-kicker">Tu membresía</span><h2 style="margin-top:7px">Todo claro, desde el inicio.</h2></div>
+          <div class="help-row"><span class="help-icon">◷</span><div><strong>Acceso por 90 días</strong><span>El plazo comienza el día que el equipo activa tu cuenta después de verificar el pago.</span></div></div>
+          <div class="help-row"><span class="help-icon">↗</span><div><strong>Renovar por WhatsApp</strong><span>Escríbenos para coordinar el pago y confirmar la fecha de renovación.</span></div></div>
+          <div class="help-row"><span class="help-icon">5</span><div><strong>$5 para recuperar letreros</strong><span>Cada acceso contribuye al fondo de señalización de la ruta.</span></div></div>
+          <a class="ui-button" id="renewWhatsApp" href="https://wa.me/584125580049?text=Hola%20Jairo%2C%20quiero%20renovar%20mi%20acceso%20al%20mapa%20de%20la%20Gran%20Sabana%20por%20%2415." target="_blank" rel="noopener">Consultar renovación <span>↗</span></a>
+          <div class="notice">Panel ilustrativo. No conecta con WordPress, no procesa pagos y no almacena datos en un servidor.</div>
+          <div class="account-access-links"><a href="index.html">Volver al inicio</a><a href="mapa.html">Abrir mapa</a></div>
+        </aside>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer"><div><span><strong>ZURITA5UR</strong> · Pasión, aventura y conservación en familia.</span><span>Gran Sabana · Venezuela</span><span><a href="historia.html">Nuestra historia</a> · <a href="conservacion.html">Conservación</a> · <a href="mapa.html">Mapa</a> · <a href="comunidad.html">Comunidad</a> · <a href="bitacora.html">Bitácora</a> · <a href="cuenta.html">Mi cuenta</a></span></div></footer>
+  <nav class="mobile-route-dock" aria-label="Navegación rápida">
+    <a class="mobile-dock-item" href="index.html"><span class="mobile-dock-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="m3 10 9-7 9 7M5 9v11h14V9M9 20v-6h6v6"/></svg></span><span>Inicio</span></a>
+    <a class="mobile-dock-item mobile-dock-community" href="comunidad.html" aria-label="Abrir la comunidad"><span class="mobile-dock-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="3"/><path d="M3 20v-1a6 6 0 0 1 12 0v1M16 5.5a3 3 0 0 1 0 5.5M18 14a5 5 0 0 1 3 4.5V20"/></svg></span><span>Comunidad</span></a>
+    <a class="mobile-dock-item mobile-dock-map" href="mapa.html?startDemoRoute=1" aria-label="Abrir el mapa e iniciar el recorrido de demostración"><span class="mobile-dock-map-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="m3 6 6-2 6 2 6-2v14l-6 2-6-2-6 2V6Z"/><path d="M9 4v14M15 6v14"/></svg></span><span>Mapa</span></a>
+    <a class="mobile-dock-item mobile-dock-account" href="cuenta.html" aria-current="page"><span class="mobile-dock-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="3.5"/><path d="M5 20v-1a7 7 0 0 1 14 0v1"/></svg></span><span>Mi cuenta</span></a>
+    <a class="mobile-dock-item mobile-dock-whatsapp" href="https://wa.me/584125580049?text=Hola%20Jairo%2C%20necesito%20ayuda%20con%20mi%20membres%C3%ADa%20del%20mapa%20de%20la%20Gran%20Sabana." target="_blank" rel="noopener" aria-label="Escribir a Jairo por WhatsApp"><span class="mobile-dock-icon" aria-hidden="true"><img src="assets/whatsapp.svg" alt=""></span><span>WhatsApp</span></a>
+  </nav>
+  <a class="wa-float" href="https://wa.me/584125580049?text=Hola%20Jairo%2C%20necesito%20ayuda%20con%20mi%20membres%C3%ADa%20del%20mapa%20de%20la%20Gran%20Sabana." target="_blank" rel="noopener" aria-label="Escribir a Jairo por WhatsApp"><img src="assets/whatsapp.svg" alt=""></a>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script>
+    const STORE_KEY = "zurita5ur_demo_member_v1";
+    const loginView = document.getElementById("loginView");
+    const dashboard = document.getElementById("dashboard");
+    const loginForm = document.getElementById("loginForm");
+    let member = readMember();
+
+    function readMember() {
+      try {
+        const value = JSON.parse(localStorage.getItem(STORE_KEY) || "null");
+        if (!value || Array.isArray(value) || typeof value.email !== "string" ||
+            typeof value.signedIn !== "boolean") return null;
+        value.payments = Array.isArray(value.payments)
+          ? value.payments.filter(payment => payment && typeof payment === "object")
+          : [];
+        return value;
+      } catch {
+        return null;
+      }
+    }
+
+    function saveMember() {
+      localStorage.setItem(STORE_KEY,JSON.stringify(member));
+    }
+
+    function expiryDate(days) {
+      const date = new Date();
+      date.setDate(date.getDate()+days);
+      return date;
+    }
+
+    function remainingDays() {
+      if (!member || !member.expiresAt) return 0;
+      const expiry = Date.parse(member.expiresAt);
+      return Number.isFinite(expiry) ? Math.max(0,Math.ceil((expiry-Date.now())/86400000)) : 0;
+    }
+
+    function showToast(message) {
+      const toast = document.getElementById("toast");
+      toast.textContent = message;
+      toast.classList.add("show");
+      window.clearTimeout(showToast.timeout);
+      showToast.timeout = window.setTimeout(() => toast.classList.remove("show"),3600);
+    }
+
+    function renderHistory() {
+      const container = document.getElementById("paymentHistory");
+      const payments = member.payments || [];
+      container.textContent = "";
+      if (!payments.length) {
+        const empty = document.createElement("div");
+        empty.className = "empty-payments";
+        empty.textContent = "Aún no tienes movimientos registrados en esta demo. Desde aquí podrás revisar pagos y solicitudes de renovación.";
+        container.append(empty);
+        return;
+      }
+      const table = document.createElement("table");
+      table.className = "payment-table";
+      table.innerHTML = "<thead><tr><th>Fecha</th><th>Medio</th><th>Importe</th><th>Estado</th></tr></thead><tbody></tbody>";
+      const tbody = table.querySelector("tbody");
+      payments.forEach(payment => {
+        const row = document.createElement("tr");
+        [payment.date,payment.method,`$${payment.amount}`].forEach(value => {
+          const cell = document.createElement("td");
+          cell.textContent = value == null ? "" : String(value);
+          row.append(cell);
+        });
+        const statusCell = document.createElement("td");
+        const status = document.createElement("span");
+        status.className = `payment-status${payment.status === "Verificado" ? " paid" : ""}`;
+        status.textContent = payment.status == null ? "" : String(payment.status);
+        statusCell.append(status);
+        row.append(statusCell);
+        tbody.append(row);
+      });
+      container.append(table);
+    }
+
+    function renderDashboard() {
+      const signedIn = !!(member && member.signedIn);
+      loginView.classList.toggle("hidden",signedIn);
+      dashboard.classList.toggle("visible",signedIn);
+      if (!signedIn) return;
+      const days = remainingDays();
+      const active = !!member.active && days > 0;
+      document.getElementById("memberName").textContent = (member.email.split("@")[0] || "viajero").replace(/[._-]/g," ");
+      document.getElementById("memberEmail").textContent = member.email;
+      document.getElementById("memberBadge").textContent = active ? "Acceso activo" : "Acceso vencido";
+      document.getElementById("memberBadge").classList.toggle("expired",!active);
+      document.getElementById("memberHeading").textContent = active ? "Tu ruta sigue abierta." : "Tu acceso necesita renovarse.";
+      document.getElementById("memberSummary").textContent = active ? "La membresía está activa. En esta demo, las capas privadas del mapa todavía no están conectadas." : "Coordina la renovación por WhatsApp. El acceso se activa después de verificar el pago.";
+      document.getElementById("daysLeft").textContent = active ? days : "0";
+      const progressValue = active ? Math.min(90,days) : 0;
+      document.getElementById("membershipProgressFill").style.width = `${(progressValue/90)*100}%`;
+      document.getElementById("membershipProgress").setAttribute("aria-valuenow",String(progressValue));
+      document.getElementById("progressLabel").textContent = `${progressValue} de 90 días`;
+      const expiry = Date.parse(member.expiresAt);
+      document.getElementById("expiryDate").textContent = Number.isFinite(expiry) ? new Date(expiry).toLocaleDateString("es-VE") : "—";
+      document.getElementById("openMemberMap").textContent = active ? "Ver mapa de demo ↗" : "Ver vista pública ↗";
+      document.getElementById("openMemberMap").href = "mapa.html";
+      document.getElementById("simulateExpiry").textContent = active ? "Simular vencimiento" : "Reactivar demo 90 días";
+      renderHistory();
+    }
+
+    function signIn(email) {
+      const prior = readMember();
+      if (prior && prior.email.toLowerCase() === email.toLowerCase()) {
+        member = prior;
+      } else {
+        member = {
+          email,
+          active:true,
+          signedIn:true,
+          activatedAt:new Date().toISOString(),
+          expiresAt:expiryDate(90).toISOString(),
+          payments:[{date:new Date().toLocaleDateString("es-VE"),method:"Demo",amount:15,status:"Simulado"}]
+        };
+      }
+      member.signedIn = true;
+      saveMember();
+      renderDashboard();
+    }
+
+    loginForm.addEventListener("submit",event => {
+      event.preventDefault();
+      const email = document.getElementById("email");
+      const password = document.getElementById("password");
+      const message = document.getElementById("loginMessage");
+      if (!email.checkValidity() || !password.value.trim()) {
+        message.classList.remove("success");
+        message.textContent = "Escribe un correo válido y una contraseña para probar la demo.";
+        return;
+      }
+      signIn(email.value.trim());
+    });
+
+    document.getElementById("sampleLogin").addEventListener("click",() => {
+      document.getElementById("email").value = "viajero.demo@zurita5ur.com";
+      document.getElementById("password").value = "demo-cliente";
+      signIn("viajero.demo@zurita5ur.com");
+    });
+
+    document.getElementById("logout").addEventListener("click",() => {
+      member.signedIn = false;
+      saveMember();
+      document.getElementById("paymentForm").classList.remove("open");
+      renderDashboard();
+    });
+
+    document.getElementById("simulateExpiry").addEventListener("click",event => {
+      if (member.active && remainingDays() > 0) {
+        member.active = false;
+        member.expiresAt = new Date(Date.now()-86400000).toISOString();
+        event.currentTarget.textContent = "Reactivar demo 90 días";
+        document.getElementById("memberBadge").textContent = "Acceso vencido";
+        showToast("Se simuló el vencimiento. El mapa volverá a mostrar la vista pública.");
+      } else {
+        member.active = true;
+        member.activatedAt = new Date().toISOString();
+        member.expiresAt = expiryDate(90).toISOString();
+        event.currentTarget.textContent = "Simular vencimiento";
+        showToast("Membresía de demostración reactivada por 90 días.");
+      }
+      saveMember();
+      renderDashboard();
+    });
+
+    document.getElementById("showPaymentForm").addEventListener("click",() => {
+      const form = document.getElementById("paymentForm");
+      form.classList.toggle("open");
+      if (form.classList.contains("open")) document.getElementById("paymentMethod").focus();
+    });
+
+    document.getElementById("paymentForm").addEventListener("submit",event => {
+      event.preventDefault();
+      const method = document.getElementById("paymentMethod").value;
+      if (!method) return;
+      member.payments = member.payments || [];
+      member.payments.unshift({date:new Date().toLocaleDateString("es-VE"),method,amount:15,status:"Pendiente"});
+      saveMember();
+      renderHistory();
+      event.currentTarget.reset();
+      event.currentTarget.classList.remove("open");
+      showToast("Solicitud de pago registrada en este navegador. El estado permanece pendiente; no se ha procesado ningún pago.");
+    });
+
+    document.getElementById("navMenuButton").addEventListener("click",event => {
+      const open = document.getElementById("siteLinks").classList.toggle("open");
+      event.currentTarget.setAttribute("aria-expanded",String(open));
+      event.currentTarget.setAttribute("aria-label",open ? "Cerrar menú" : "Abrir menú");
+      event.currentTarget.textContent = open ? "×" : "☰";
+    });
+    document.querySelectorAll("#siteLinks a").forEach(link => link.addEventListener("click",() => {
+      document.getElementById("siteLinks").classList.remove("open");
+      const button = document.getElementById("navMenuButton");
+      button.setAttribute("aria-expanded","false");
+      button.setAttribute("aria-label","Abrir menú");
+      button.textContent = "☰";
+    }));
+
+    const header = document.querySelector(".site-header");
+    const updateHeader = () => header.classList.toggle("scrolled",window.scrollY > 12);
+    updateHeader();
+    window.addEventListener("scroll",updateHeader,{passive:true});
+    window.setInterval(() => {
+      if (member && member.signedIn) renderDashboard();
+    },60000);
+
+    renderDashboard();
+  </script>
+</body>
+</html>
