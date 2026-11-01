@@ -1,0 +1,341 @@
+﻿<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#173b2f">
+  <meta name="description" content="Comparte fotos, consejos, datos y preguntas sobre la Gran Sabana y la vida en ruta con Zurita5ur.">
+  <title>Comunidad · Zurita5ur</title>
+  <link rel="icon" href="../assets/zurita-logo.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700;800&family=DM+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../assets/app.css">
+  <link rel="stylesheet" href="../assets/bitacora.css">
+  <link rel="stylesheet" href="../assets/comunidad.css">
+  <link rel="stylesheet" href="demo-alternativa.css">
+</head>
+<body class="editorial-page journal-page community-page">
+  <header class="site-header">
+    <nav class="site-nav" aria-label="Navegación principal">
+      <a class="site-brand" href="index.html"><img src="../assets/zurita-logo.png" alt=""><span><strong>ZURITA5UR</strong><small>Familia · ruta · conservación</small></span></a>
+      <div class="site-links" id="siteLinks">
+        <a href="historia.html">Nuestra historia</a>
+        <a href="conservacion.html">Conservación</a>
+        <a href="mapa.html">Mapa</a>
+        <a href="comunidad.html" aria-current="page">Comunidad</a>
+        <a href="bitacora.html">Bitácora</a>
+        <a href="cuenta.html">Mi cuenta</a>
+      </div>
+      <a class="ui-button" href="#communityComposer">Compartir una historia <span aria-hidden="true">↓</span></a>
+      <button class="nav-menu-button" id="navMenuButton" type="button" aria-label="Abrir menú" aria-controls="siteLinks" aria-expanded="false">☰</button>
+    </nav>
+  </header>
+
+  <main>
+    <section class="editorial-hero community-hero" aria-labelledby="communityTitle">
+      <img src="../assets/174213393100067151.jpg" alt="La familia Zurita comparte una comida durante su viaje">
+      <div class="editorial-hero-content">
+        <span class="page-kicker">La ruta también se comparte</span>
+        <h1 id="communityTitle">Experiencias que nos acercan.</h1>
+        <p>Un espacio para compartir fotos, consejos y datos de viaje, o preguntar algo a otras personas que aman la Gran Sabana y los caminos de Sudamérica.</p>
+        <a class="community-hero-link" href="#communityComposer">Compartir con la comunidad <span aria-hidden="true">↓</span></a>
+      </div>
+    </section>
+
+    <section class="community-board" aria-labelledby="communityBoardTitle">
+      <div class="community-wrap">
+        <header class="community-heading">
+          <span class="page-kicker">Voces del camino</span>
+          <h2 id="communityBoardTitle">Una ruta se disfruta más cuando se comparte.</h2>
+          <p>Publica una experiencia, deja un consejo o abre una conversación con otros viajeros.</p>
+        </header>
+
+        <aside class="community-local-note" role="note">
+          <strong>Prototipo local:</strong> las publicaciones y comentarios se guardan en este navegador. Por ahora no son visibles para otros visitantes.
+        </aside>
+
+        <div class="community-layout">
+          <section class="community-composer" id="communityComposer" aria-labelledby="composerTitle">
+            <span class="community-eyebrow">Tu aporte</span>
+            <h3 id="composerTitle">Comparte algo con la ruta.</h3>
+            <form id="communityPostForm">
+              <div class="community-form-row">
+                <label class="community-field">Tu nombre
+                  <input name="author" type="text" maxlength="45" autocomplete="name" required placeholder="¿Cómo te llamamos?">
+                </label>
+                <label class="community-field">Tipo de publicación
+                  <select name="type" required>
+                    <option value="foto">Foto de ruta</option>
+                    <option value="consejo">Consejo</option>
+                    <option value="lugar">Lugar o dato</option>
+                    <option value="pregunta">Pregunta</option>
+                  </select>
+                </label>
+              </div>
+              <label class="community-field">Título
+                <input name="title" type="text" maxlength="100" required placeholder="¿Qué quieres compartir?">
+              </label>
+              <label class="community-field">Tu publicación
+                <textarea name="content" rows="5" maxlength="1000" required placeholder="Cuéntanos la experiencia, el consejo o la duda..."></textarea>
+              </label>
+              <label class="community-field">Añadir una foto <span class="community-optional">(opcional)</span>
+                <input name="photo" type="file" accept="image/jpeg,image/png,image/webp">
+                <small>JPG, PNG o WebP · máximo 6 MB. La imagen se optimiza antes de guardarse.</small>
+              </label>
+              <button class="community-submit" type="submit">Publicar en este navegador <span aria-hidden="true">↗</span></button>
+            </form>
+            <p class="community-status" id="communityStatus" role="status" aria-live="polite"></p>
+          </section>
+
+          <section class="community-feed" id="communityFeed" aria-labelledby="feedTitle">
+            <div class="community-feed-head">
+              <div>
+                <span class="community-eyebrow">Tablón</span>
+                <h3 id="feedTitle">Lo que comparte la comunidad.</h3>
+              </div>
+              <span class="community-count" id="communityCount">0 publicaciones</span>
+            </div>
+            <div class="community-filters" role="group" aria-label="Filtrar publicaciones">
+              <button type="button" data-filter="all" aria-pressed="true">Todas</button>
+              <button type="button" data-filter="foto" aria-pressed="false">Fotos</button>
+              <button type="button" data-filter="consejo" aria-pressed="false">Consejos</button>
+              <button type="button" data-filter="lugar" aria-pressed="false">Lugares</button>
+              <button type="button" data-filter="pregunta" aria-pressed="false">Preguntas</button>
+            </div>
+            <div class="community-posts" id="communityPosts" aria-live="polite"></div>
+          </section>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div><span><strong>ZURITA5UR</strong> · Pasión, aventura y conservación en familia.</span><span>Gran Sabana · Venezuela</span><span><a href="historia.html">Nuestra historia</a> · <a href="conservacion.html">Conservación</a> · <a href="mapa.html">Mapa</a> · <a href="comunidad.html">Comunidad</a> · <a href="bitacora.html">Bitácora</a> · <a href="cuenta.html">Mi cuenta</a></span></div>
+  </footer>
+  <a class="wa-float" href="https://wa.me/584125580049?text=Hola%20Jairo%2C%20quiero%20compartir%20una%20experiencia%20o%20pregunta%20en%20la%20comunidad%20Zurita5ur." target="_blank" rel="noopener" aria-label="Escribir a Jairo por WhatsApp"><img src="../assets/whatsapp.svg" alt=""></a>
+
+  <nav class="mobile-route-dock" aria-label="Navegación rápida">
+    <a class="mobile-dock-item" href="index.html"><span class="mobile-dock-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="m3 10 9-7 9 7M5 9v11h14V9M9 20v-6h6v6"/></svg></span><span>Inicio</span></a>
+    <a class="mobile-dock-item mobile-dock-community" href="comunidad.html" aria-current="page"><span class="mobile-dock-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="3"/><path d="M3 20v-1a6 6 0 0 1 12 0v1M16 5.5a3 3 0 0 1 0 5.5M18 14a5 5 0 0 1 3 4.5V20"/></svg></span><span>Comunidad</span></a>
+    <a class="mobile-dock-item mobile-dock-map" href="mapa.html?startDemoRoute=1" aria-label="Abrir el mapa e iniciar el recorrido de demostración"><span class="mobile-dock-map-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="m3 6 6-2 6 2 6-2v14l-6 2-6-2-6 2V6Z"/><path d="M9 4v14M15 6v14"/></svg></span><span>Mapa</span></a>
+    <a class="mobile-dock-item mobile-dock-account" href="cuenta.html"><span class="mobile-dock-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="3.5"/><path d="M5 20v-1a7 7 0 0 1 14 0v1"/></svg></span><span>Mi cuenta</span></a>
+    <a class="mobile-dock-item mobile-dock-whatsapp" href="https://wa.me/584125580049?text=Hola%20Jairo%2C%20quiero%20compartir%20una%20experiencia%20o%20pregunta%20en%20la%20comunidad%20Zurita5ur." target="_blank" rel="noopener" aria-label="Escribir a Jairo por WhatsApp"><span class="mobile-dock-icon" aria-hidden="true"><img src="../assets/whatsapp.svg" alt=""></span><span>WhatsApp</span></a>
+  </nav>
+
+  <script>
+    const STORE_KEY = "zurita5ur_community_v1";
+    const TYPE_LABELS = {
+      foto: "Foto de ruta",
+      consejo: "Consejo",
+      lugar: "Lugar o dato",
+      pregunta: "Pregunta"
+    };
+    const postForm = document.getElementById("communityPostForm");
+    const postsElement = document.getElementById("communityPosts");
+    const statusElement = document.getElementById("communityStatus");
+    const countElement = document.getElementById("communityCount");
+    const filters = [...document.querySelectorAll(".community-filters button")];
+    let activeFilter = "all";
+    let posts = [];
+    let storageReady = true;
+
+    function showStatus(message, isError = false) {
+      statusElement.textContent = message;
+      statusElement.classList.toggle("is-error",isError);
+    }
+
+    function escapeHTML(value) {
+      return String(value ?? "").replace(/[&<>"']/g,character => ({
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        '"': "&quot;",
+        "'": "&#39;"
+      })[character]);
+    }
+
+    function loadPosts() {
+      const saved = localStorage.getItem(STORE_KEY);
+      if (!saved) return [];
+      const parsed = JSON.parse(saved);
+      if (!Array.isArray(parsed)) throw new Error("Los datos guardados de Comunidad no tienen un formato válido.");
+      return parsed;
+    }
+
+    function savePosts(nextPosts) {
+      try {
+        localStorage.setItem(STORE_KEY,JSON.stringify(nextPosts));
+      } catch (error) {
+        if (error instanceof DOMException && error.name === "QuotaExceededError") {
+          throw new Error("El navegador se quedó sin espacio para guardar. Prueba con una foto más liviana.");
+        }
+        if (error instanceof DOMException && error.name === "SecurityError") {
+          throw new Error("El navegador bloqueó el almacenamiento local. Revisa sus permisos e inténtalo de nuevo.");
+        }
+        throw error;
+      }
+    }
+
+    function formatDate(value) {
+      const date = new Date(value);
+      if (Number.isNaN(date.getTime())) return "Fecha no disponible";
+      return new Intl.DateTimeFormat("es-VE",{dateStyle:"medium",timeStyle:"short"}).format(date);
+    }
+
+    function escapeImage(value) {
+      return typeof value === "string" && /^data:image\/jpeg;base64,[A-Za-z0-9+/=]+$/.test(value) ? value : "";
+    }
+
+    function renderPosts() {
+      const visiblePosts = posts.filter(post => activeFilter === "all" || post.type === activeFilter);
+      countElement.textContent = `${posts.length} ${posts.length === 1 ? "publicación" : "publicaciones"}`;
+      if (!visiblePosts.length) {
+        postsElement.innerHTML = `<div class="community-empty"><span>UN ESPACIO PARA COMPARTIR</span><h3>${posts.length ? "Aún no hay publicaciones en este tema." : "La primera historia puede ser la tuya."}</h3><p>${posts.length ? "Prueba otra categoría o comparte algo nuevo." : "Publica una foto, un consejo, un lugar o una pregunta para empezar."}</p></div>`;
+        return;
+      }
+
+      postsElement.innerHTML = visiblePosts.map(post => {
+        const type = Object.prototype.hasOwnProperty.call(TYPE_LABELS,post.type) ? post.type : "consejo";
+        const comments = Array.isArray(post.comments) ? post.comments : [];
+        const photo = escapeImage(post.photo);
+        const commentMarkup = comments.map(comment => `<article class="community-comment"><div><strong>${escapeHTML(comment.author)}</strong><time>${escapeHTML(formatDate(comment.createdAt))}</time></div><p>${escapeHTML(comment.content)}</p></article>`).join("");
+        return `<article class="community-post">
+          <div class="community-post-meta"><span class="community-tag ${type}">${TYPE_LABELS[type]}</span><time>${escapeHTML(formatDate(post.createdAt))}</time></div>
+          <h4>${escapeHTML(post.title)}</h4>
+          <p class="community-post-content">${escapeHTML(post.content).replace(/\n/g,"<br>")}</p>
+          ${photo ? `<img class="community-post-photo" src="${photo}" alt="Foto compartida: ${escapeHTML(post.title)}">` : ""}
+          <details class="community-comments">
+            <summary>${comments.length} ${comments.length === 1 ? "comentario" : "comentarios"} · Responder</summary>
+            <div class="community-comment-list">${commentMarkup || `<p class="community-no-comments">Todavía no hay comentarios. Puedes iniciar la conversación.</p>`}</div>
+            <form class="community-comment-form" data-post-id="${escapeHTML(post.id)}">
+              <label class="community-field">Tu nombre<input name="author" type="text" maxlength="45" required placeholder="Tu nombre"></label>
+              <label class="community-field">Tu comentario<textarea name="content" rows="2" maxlength="500" required placeholder="Escribe una respuesta o pregunta..."></textarea></label>
+              <button class="community-comment-submit" type="submit">Comentar</button>
+            </form>
+          </details>
+        </article>`;
+      }).join("");
+    }
+
+    function createId() {
+      return `${Date.now().toString(36)}-${Math.random().toString(36).slice(2,10)}`;
+    }
+
+    async function prepareImage(file) {
+      if (!["image/jpeg","image/png","image/webp"].includes(file.type)) {
+        throw new Error("Elige una imagen JPG, PNG o WebP.");
+      }
+      if (file.size > 6 * 1024 * 1024) throw new Error("La foto debe pesar menos de 6 MB.");
+      const source = URL.createObjectURL(file);
+      try {
+        const image = new Image();
+        await new Promise((resolve,reject) => {
+          image.onload = resolve;
+          image.onerror = () => reject(new Error("No se pudo abrir esa imagen. Prueba con otra foto."));
+          image.src = source;
+        });
+        const scale = Math.min(1,1280 / Math.max(image.naturalWidth,image.naturalHeight));
+        const canvas = document.createElement("canvas");
+        canvas.width = Math.max(1,Math.round(image.naturalWidth * scale));
+        canvas.height = Math.max(1,Math.round(image.naturalHeight * scale));
+        const context = canvas.getContext("2d");
+        if (!context) throw new Error("El navegador no pudo preparar la imagen.");
+        context.fillStyle = "#ffffff";
+        context.fillRect(0,0,canvas.width,canvas.height);
+        context.drawImage(image,0,0,canvas.width,canvas.height);
+        return canvas.toDataURL("image/jpeg",.78);
+      } finally {
+        URL.revokeObjectURL(source);
+      }
+    }
+
+    function handleStorageError(error) {
+      if (!(error instanceof Error)) throw error;
+      showStatus(error.message || "No se pudo guardar el contenido en este navegador.",true);
+    }
+
+    try {
+      posts = loadPosts();
+      renderPosts();
+    } catch (error) {
+      storageReady = false;
+      postForm.querySelectorAll("input,select,textarea,button").forEach(control => { control.disabled = true; });
+      handleStorageError(error);
+    }
+
+    filters.forEach(button => button.addEventListener("click",() => {
+      activeFilter = button.dataset.filter;
+      filters.forEach(filter => filter.setAttribute("aria-pressed",String(filter === button)));
+      renderPosts();
+    }));
+
+    postForm.addEventListener("submit",async event => {
+      event.preventDefault();
+      if (!storageReady) return;
+      const data = new FormData(postForm);
+      const file = data.get("photo");
+      try {
+        const photo = file instanceof File && file.size ? await prepareImage(file) : "";
+        const post = {
+          id: createId(),
+          author: String(data.get("author")).trim(),
+          type: String(data.get("type")),
+          title: String(data.get("title")).trim(),
+          content: String(data.get("content")).trim(),
+          photo,
+          createdAt: new Date().toISOString(),
+          comments: []
+        };
+        const nextPosts = [post,...posts];
+        savePosts(nextPosts);
+        posts = nextPosts;
+        postForm.reset();
+        activeFilter = "all";
+        filters.forEach(filter => filter.setAttribute("aria-pressed",String(filter.dataset.filter === "all")));
+        renderPosts();
+        showStatus("Tu publicación quedó guardada en este navegador.");
+      } catch (error) {
+        handleStorageError(error);
+      }
+    });
+
+    postsElement.addEventListener("submit",event => {
+      const form = event.target;
+      if (!(form instanceof HTMLFormElement) || !form.matches(".community-comment-form")) return;
+      event.preventDefault();
+      if (!storageReady) return;
+      const post = posts.find(item => item.id === form.dataset.postId);
+      if (!post) {
+        showStatus("No se encontró esa publicación. Actualiza la página e inténtalo de nuevo.",true);
+        return;
+      }
+      const data = new FormData(form);
+      const comment = {
+        id: createId(),
+        author: String(data.get("author")).trim(),
+        content: String(data.get("content")).trim(),
+        createdAt: new Date().toISOString()
+      };
+      const nextPosts = posts.map(item => item.id === post.id ? {...item,comments:[...(Array.isArray(item.comments) ? item.comments : []),comment]} : item);
+      try {
+        savePosts(nextPosts);
+        posts = nextPosts;
+        renderPosts();
+        showStatus("Tu comentario quedó guardado en este navegador.");
+      } catch (error) {
+        handleStorageError(error);
+      }
+    });
+
+    const menuButton = document.getElementById("navMenuButton");
+    const siteLinks = document.getElementById("siteLinks");
+    menuButton.addEventListener("click",() => {
+      const expanded = menuButton.getAttribute("aria-expanded") === "true";
+      menuButton.setAttribute("aria-expanded",String(!expanded));
+      menuButton.setAttribute("aria-label",expanded ? "Abrir menú" : "Cerrar menú");
+      siteLinks.classList.toggle("open",!expanded);
+    });
+  </script>
+</body>
+</html>
