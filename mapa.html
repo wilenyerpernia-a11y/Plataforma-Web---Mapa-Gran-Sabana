@@ -1,0 +1,329 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#111b16">
+  <meta name="description" content="Explora el mapa interactivo de la Gran Sabana de Zurita5ur.">
+  <title>Mapa de la Gran Sabana · Zurita5ur</title>
+  <link rel="icon" href="assets/zurita-logo.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700;800&family=DM+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/app.css">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="">
+</head>
+<body class="map-page">
+  <header class="site-header">
+    <nav class="site-nav" aria-label="Navegación principal">
+      <a class="site-brand" href="index.html">
+        <img src="assets/zurita-logo.png" alt="">
+        <span><strong>ZURITA5UR</strong><small>Familia · ruta · conservación</small></span>
+      </a>
+      <div class="site-links" id="siteLinks">
+        <a href="historia.html">Nuestra historia</a>
+        <a href="conservacion.html">Conservación</a>
+        <a href="mapa.html" aria-current="page">Mapa</a>
+        <a href="comunidad.html">Comunidad</a>
+        <a href="bitacora.html">Bitácora</a>
+        <a href="cuenta.html">Mi cuenta</a>
+      </div>
+      <a class="ui-button" href="cuenta.html">Mi cuenta <span>↗</span></a>
+      <button class="nav-menu-button" id="navMenuButton" type="button" aria-label="Abrir menú" aria-controls="siteLinks" aria-expanded="false">☰</button>
+    </nav>
+  </header>
+
+  <div class="map-topline">
+    <div class="map-topline-copy">
+      <a class="back-link" href="index.html">← Inicio</a>
+      <div><h1>Mapa de la Gran Sabana</h1><p>Una guía de ruta hecha por la familia Zurita</p></div>
+    </div>
+    <span class="live-status" id="membershipStatus">Demo interactiva · 12 puntos de muestra</span>
+  </div>
+
+  <main class="atlas-layout">
+    <section class="atlas-map-panel" aria-label="Mapa interactivo">
+      <div id="atlasMap" role="application" aria-label="Mapa con referencias aproximadas y lugares ficticios de demostración"></div>
+      <div class="atlas-filters" role="group" aria-label="Filtrar lugares del mapa">
+        <button class="atlas-filter active" type="button" data-filter="all" aria-pressed="true">Todos</button>
+        <button class="atlas-filter" type="button" data-filter="public" aria-pressed="false">Públicos</button>
+        <button class="atlas-filter" type="button" data-filter="demo" aria-pressed="false">Lugares demo</button>
+        <button class="atlas-filter" type="button" data-filter="camp" aria-pressed="false">Campamentos</button>
+        <button class="atlas-filter" type="button" data-filter="locked" aria-pressed="false">🔒 Bloqueados</button>
+        <a class="atlas-filter" href="#mapPurchase">Acceso · 90 días</a>
+      </div>
+      <div class="atlas-map-badge" id="mapBadge" role="status"><strong>DEMO · NO NAVEGABLE</strong> · Los marcadores con candado son ilustrativos; no muestran ubicaciones privadas.</div>
+    </section>
+
+    <aside class="atlas-side">
+      <div class="atlas-side-head">
+        <span class="page-kicker">Explora · prueba · descubre</span>
+        <h2>Prueba el mapa interactivo.</h2>
+        <p>Activa un recorrido esquemático y explora los puntos de muestra. Los lugares DEMO son inventados y no sirven para viajar.</p>
+        <input class="atlas-search" id="placeSearch" type="search" placeholder="Buscar lugar o categoría" aria-label="Buscar lugares del mapa">
+        <button class="ui-button dark route-start" id="startRouteButton" type="button" aria-pressed="false">Iniciar ruta demo <span>↗</span></button>
+        <p class="route-status" id="routeStatus" aria-live="polite">El trazo de demostración no es un track GPS ni sigue caminos reales.</p>
+        <section class="atlas-locked-preview" id="lockedPreview" aria-label="Capas bloqueadas del mapa">
+          <p class="locked-preview-title">Capas bloqueadas · acceso por 90 días</p>
+          <div class="locked-option-grid">
+            <span>🔒 Rutas 4x4</span>
+            <span>🔒 Campamentos</span>
+            <span>🔒 Agua y servicios</span>
+            <span>🔒 Puntos de interés</span>
+          </div>
+          <p class="locked-preview-note">Vista previa sin coordenadas ni ubicaciones privadas.</p>
+        </section>
+      </div>
+      <div class="atlas-results" id="placeResults" aria-live="polite"></div>
+      <div class="atlas-purchase" id="mapPurchase">
+        <div class="purchase-header"><div><small>Acceso completo · 90 días</small><strong>Mapa Gran Sabana</strong></div><em>$15 USD</em></div>
+        <ul class="payment-split">
+          <li><span>Plataforma web</span><b>$5</b></li>
+          <li><span>Autoría del mapa</span><b>$5</b></li>
+          <li><span>Fondo para recuperar letreros</span><b>$5</b></li>
+        </ul>
+        <a class="ui-button dark" id="purchaseLink" href="https://wa.me/584125580049?text=Hola%20Jairo%2C%20vi%20la%20demo%20del%20mapa%20de%20la%20Gran%20Sabana%20y%20quiero%20informaci%C3%B3n%20sobre%20el%20acceso%20de%2090%20d%C3%ADas%20por%20%2415." target="_blank" rel="noopener">Consultar por WhatsApp <span>↗</span></a>
+        <p class="access-footnote">Pago coordinado manualmente. El acceso vence 90 días después de su activación.</p>
+      </div>
+    </aside>
+  </main>
+  <p class="map-disclaimer">Mapa base: Esri, USGS, NOAA y colaboradores de OpenStreetMap. Los cinco lugares marcados DEMO, los cuatro marcadores con candado y el recorrido simulado son ilustrativos: no corresponden a lugares ni caminos reales, no son un track GPS y no deben usarse para orientarse, planificar o viajar. Las tres referencias públicas son aproximadas y deben validarse localmente. El acceso de membresía es simulado; esta web no protege capas privadas en el servidor.</p>
+  <footer class="site-footer"><div><span><strong>ZURITA5UR</strong> · Pasión, aventura y conservación en familia.</span><span>Gran Sabana · Venezuela</span><span><a href="historia.html">Nuestra historia</a> · <a href="conservacion.html">Conservación</a> · <a href="mapa.html">Mapa</a> · <a href="comunidad.html">Comunidad</a> · <a href="bitacora.html">Bitácora</a> · <a href="cuenta.html">Mi cuenta</a></span></div></footer>
+  <nav class="mobile-route-dock" aria-label="Navegación rápida">
+    <a class="mobile-dock-item" href="index.html"><span class="mobile-dock-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="m3 10 9-7 9 7M5 9v11h14V9M9 20v-6h6v6"/></svg></span><span>Inicio</span></a>
+    <a class="mobile-dock-item mobile-dock-community" href="comunidad.html" aria-label="Abrir la comunidad"><span class="mobile-dock-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="3"/><path d="M3 20v-1a6 6 0 0 1 12 0v1M16 5.5a3 3 0 0 1 0 5.5M18 14a5 5 0 0 1 3 4.5V20"/></svg></span><span>Comunidad</span></a>
+    <button class="mobile-dock-item mobile-dock-map" id="mobileRouteStartButton" type="button" aria-controls="startRouteButton" aria-pressed="false" aria-label="Iniciar recorrido de demostración">
+      <span class="mobile-dock-map-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="m3 6 6-2 6 2 6-2v14l-6 2-6-2-6 2V6Z"/><path d="M9 4v14M15 6v14"/></svg></span>
+      <span>Mapa</span>
+    </button>
+    <a class="mobile-dock-item mobile-dock-account" href="cuenta.html"><span class="mobile-dock-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="3.5"/><path d="M5 20v-1a7 7 0 0 1 14 0v1"/></svg></span><span>Mi cuenta</span></a>
+    <a class="mobile-dock-item mobile-dock-whatsapp" href="https://wa.me/584125580049?text=Hola%20Jairo%2C%20vi%20la%20demo%20del%20mapa%20de%20la%20Gran%20Sabana%20y%20quiero%20informaci%C3%B3n%20sobre%20el%20acceso%20de%2090%20d%C3%ADas%20por%20%2415." target="_blank" rel="noopener" aria-label="Consultar por WhatsApp sobre el acceso al mapa">
+      <span class="mobile-dock-icon" aria-hidden="true"><img src="assets/whatsapp.svg" alt=""></span>
+      <span>WhatsApp</span>
+    </a>
+  </nav>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+  <script>
+    const STORE_KEY = "zurita5ur_demo_member_v1";
+    const places = [
+      { name:"Santa Elena de Uairén", lat:4.6011, lng:-61.1042, type:"public", category:"Punto público", icon:"•", photo:"assets/174213393300075562.jpg", detail:"Localidad de referencia para iniciar la ruta hacia la Gran Sabana.", access:"Conexión por carretera; verificar estado actual.", water:"Consultar condiciones y disponibilidad local.", services:"Servicios en la población; confirmar horarios." },
+      { name:"Quebrada de Jaspe", lat:5.2864, lng:-61.4097, type:"public", category:"Punto público", icon:"•", photo:"assets/174213426200083736.jpg", detail:"Parada conocida por sus formaciones de jaspe y aguas poco profundas.", access:"Acceso desde la Troncal 10; validar camino.", water:"El nivel y el caudal cambian por temporada.", services:"Consultar servicios disponibles con el guía." },
+      { name:"Salto Kamá", lat:5.4310, lng:-61.5070, type:"public", category:"Punto público", icon:"•", photo:"assets/174213426200085612.jpg", detail:"Cascada y parada de la ruta turística por la Troncal 10.", access:"Acceso y estacionamiento sujetos a condiciones locales.", water:"Caudal estacional; no acercarse al borde.", services:"Confirmar servicios y normas en el lugar." },
+      { name:"Mirador Bruma Alta (DEMO)", lat:5.72, lng:-61.28, type:"viewpoint", demo:true, category:"Lugar ficticio · DEMO", icon:"✦", detail:"Punto inventado solo para probar la interacción del mapa." },
+      { name:"Campamento Nube (DEMO)", lat:5.60, lng:-61.65, type:"camp", demo:true, category:"Campamento ficticio · DEMO", icon:"⌂", detail:"Campamento inventado para mostrar la lista y los marcadores de ejemplo." },
+      { name:"Poza Esmeralda (DEMO)", lat:5.25, lng:-60.95, type:"viewpoint", demo:true, category:"Lugar ficticio · DEMO", icon:"✦", detail:"Punto inventado; no corresponde a una poza o sitio real." },
+      { name:"Paso del Horizonte (DEMO)", lat:4.92, lng:-61.52, type:"viewpoint", demo:true, category:"Lugar ficticio · DEMO", icon:"✦", detail:"Punto inventado para mostrar el trazado esquemático." },
+      { name:"Cascada del Viento (DEMO)", lat:4.78, lng:-61.04, type:"viewpoint", demo:true, category:"Lugar ficticio · DEMO", icon:"✦", detail:"Punto inventado; no indica una cascada ni un acceso real." },
+      { name:"Rutas 4x4 · BLOQUEADO", lat:5.82, lng:-61.52, type:"locked", locked:true, category:"Capa ilustrativa", icon:"🔒", detail:"Marcador ilustrativo de una categoría bloqueada. No indica una ruta ni revela datos privados." },
+      { name:"Campamentos · BLOQUEADO", lat:5.10, lng:-61.78, type:"locked", locked:true, category:"Capa ilustrativa", icon:"🔒", detail:"Marcador ilustrativo de una categoría bloqueada. No indica un campamento real." },
+      { name:"Agua y servicios · BLOQUEADO", lat:4.62, lng:-60.86, type:"locked", locked:true, category:"Capa ilustrativa", icon:"🔒", detail:"Marcador ilustrativo de una categoría bloqueada. No indica servicios ni puntos de agua." },
+      { name:"Puntos de interés · BLOQUEADO", lat:4.46, lng:-61.28, type:"locked", locked:true, category:"Capa ilustrativa", icon:"🔒", detail:"Marcador ilustrativo de una categoría bloqueada. No corresponde a un destino real." }
+    ];
+
+    const map = L.map("atlasMap", { zoomControl:false, scrollWheelZoom:false, fadeAnimation:false }).setView([5.12,-61.25],8);
+    L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}", {
+      maxZoom:19,
+      attribution:'Tiles &copy; <a href="https://www.esri.com/">Esri</a> &mdash; Sources: Esri, USGS, NOAA, OpenStreetMap contributors'
+    }).addTo(map);
+    L.control.zoom({position:"bottomleft"}).addTo(map);
+    L.control.scale({imperial:false,position:"bottomleft"}).addTo(map);
+
+    const markerRows = [];
+    const accessBadge = document.getElementById("membershipStatus");
+    const mapBadge = document.getElementById("mapBadge");
+    const results = document.getElementById("placeResults");
+    const routeButton = document.getElementById("startRouteButton");
+    const mobileRouteStartButton = document.getElementById("mobileRouteStartButton");
+    const routeStatus = document.getElementById("routeStatus");
+    const member = (() => {
+      try {
+        const value = JSON.parse(localStorage.getItem(STORE_KEY) || "null");
+        return value && value.signedIn && value.active && Date.parse(value.expiresAt) > Date.now() ? value : null;
+      } catch {
+        return null;
+      }
+    })();
+
+    if (member) {
+      document.body.classList.add("access-on");
+      accessBadge.classList.add("active");
+      accessBadge.textContent = `Membresía demo activa · ${Math.max(0,Math.ceil((Date.parse(member.expiresAt)-Date.now())/86400000))} días`;
+      mapBadge.innerHTML = "<strong>DEMO · NO NAVEGABLE</strong> · Los candados son marcadores ilustrativos; la membresía demo no carga datos privados reales.";
+      document.getElementById("lockedPreview").innerHTML = `
+        <p class="locked-preview-title">Membresía de demostración</p>
+        <p class="locked-preview-note">Las capas privadas todavía no están conectadas a esta demo; no se muestran datos de ubicación.</p>`;
+      document.getElementById("purchaseLink").textContent = "Ver mi panel de cliente ↗";
+      document.getElementById("purchaseLink").href = "cuenta.html";
+      document.getElementById("purchaseLink").removeAttribute("target");
+    }
+
+    function markerIcon(place) {
+      const iconClasses = ["poi-icon",place.type];
+      if (place.demo) iconClasses.push("demo");
+      return L.divIcon({
+        className:"",
+        html:`<span class="${iconClasses.join(" ")}"><span>${place.icon}</span></span>`,
+        iconSize:[35,35], iconAnchor:[17,33], popupAnchor:[0,-30]
+      });
+    }
+
+    function safeCoord(value, axis) {
+      const abs = Math.abs(value).toFixed(4);
+      return `${abs}° ${axis === "lat" ? (value >= 0 ? "N" : "S") : (value >= 0 ? "E" : "O")} · aprox.`;
+    }
+
+    function popupHtml(place) {
+      const photo = place.photo ? `<img src="${place.photo}" alt="Fotografía de referencia de la ruta">` : "";
+      const contents = place.locked
+        ? `<p class="poi-popup-demo-note">${place.detail} La capa privada no está conectada a esta demo.</p>`
+        : place.demo
+        ? `<p class="poi-popup-demo-note">${place.detail} No existe como destino real y no debe usarse para navegación.</p>`
+        : `<p class="coords">${safeCoord(place.lat,"lat")} · ${safeCoord(place.lng,"lng")}</p>
+           <p>${place.detail}</p><p><strong>Acceso:</strong> ${place.access}</p>
+           <p><strong>Agua:</strong> ${place.water}</p><p><strong>Servicios:</strong> ${place.services}</p>
+           <button class="poi-action" type="button" data-place="${place.name}">Ver ficha de referencia</button>`;
+      return `<article class="poi-popup">${photo}
+        <div class="poi-popup-content"><span class="poi-popup-tag">${place.category}</span>
+        <h3>${place.name}</h3>${contents}</div></article>`;
+    }
+
+    places.forEach(place => {
+      const marker = L.marker([place.lat,place.lng],{icon:markerIcon(place),title:place.name});
+      marker.bindPopup(popupHtml(place),{maxWidth:290,minWidth:230,autoPanPadding:[16,80]});
+      marker.addTo(map);
+      markerRows.push({place,marker});
+    });
+
+    let activeFilter = "all";
+    let routeLine = null;
+    const initialBounds = L.latLngBounds(places.map(place => [place.lat,place.lng]));
+    map.fitBounds(initialBounds.pad(.15),{maxZoom:9});
+
+    function matchesFilter(place) {
+      if (activeFilter === "public") return place.type === "public" && !place.demo;
+      if (activeFilter === "demo") return !!place.demo && !place.locked;
+      if (activeFilter === "camp") return place.demo && !place.locked && place.type === "camp";
+      if (activeFilter === "locked") return !!place.locked;
+      return true;
+    }
+
+    function renderList() {
+      const query = document.getElementById("placeSearch").value.trim().toLocaleLowerCase("es");
+      const filtered = markerRows.filter(({place}) => matchesFilter(place) && `${place.name} ${place.category}`.toLocaleLowerCase("es").includes(query));
+      markerRows.forEach(({place,marker}) => {
+        const visible = matchesFilter(place) && `${place.name} ${place.category}`.toLocaleLowerCase("es").includes(query);
+        if (visible && !map.hasLayer(marker)) marker.addTo(map);
+        if (!visible && map.hasLayer(marker)) map.removeLayer(marker);
+      });
+      const routeVisible = !query && (activeFilter === "all" || activeFilter === "demo");
+      if (routeLine && routeVisible && !map.hasLayer(routeLine)) routeLine.addTo(map);
+      if (routeLine && !routeVisible && map.hasLayer(routeLine)) map.removeLayer(routeLine);
+      if (routeLine) {
+        routeStatus.textContent = routeVisible
+          ? "Recorrido demo activo. El trazo es ficticio, no sigue caminos y no sirve para navegar."
+          : "La ruta demo está oculta por el filtro. Selecciona Todos o Lugares demo para verla.";
+      }
+      results.innerHTML = filtered.length ? filtered.map(({place},index) => {
+        const n = String(index+1).padStart(2,"0");
+        const location = place.locked ? "Capa ilustrativa · sin datos privados" : place.demo ? "Ubicación ficticia · no navegable" : `${place.category} · ${safeCoord(place.lat,"lat")}`;
+        return `<button class="place-row${place.locked ? " place-row-locked" : ""}" type="button" data-place="${place.name}">
+          <span class="place-number${place.locked ? " locked" : ""}">${n}</span>
+          <span><strong>${place.name}</strong><small>${location}</small></span>
+          <span class="place-lock">${place.locked ? "🔒" : "↗"}</span></button>`;
+      }).join("") : '<p class="empty-payments">No encontramos puntos con ese filtro.</p>';
+      results.querySelectorAll("[data-place]").forEach(button => button.addEventListener("click", () => {
+        const row = markerRows.find(item => item.place.name === button.dataset.place);
+        if (!row) return;
+        map.setView(row.marker.getLatLng(),Math.max(map.getZoom(),10),{animate:true});
+        row.marker.openPopup();
+        results.querySelectorAll(".place-row").forEach(item => item.classList.toggle("selected",item === button));
+      }));
+    }
+    renderList();
+    document.getElementById("placeSearch").addEventListener("input",renderList);
+    document.querySelectorAll(".atlas-filter[data-filter]").forEach(button => button.addEventListener("click",() => {
+      activeFilter = button.dataset.filter;
+      document.querySelectorAll(".atlas-filter[data-filter]").forEach(filter => {
+        const active = filter === button;
+        filter.classList.toggle("active",active);
+        filter.setAttribute("aria-pressed",String(active));
+      });
+      renderList();
+    }));
+    routeButton.addEventListener("click",() => {
+      if (routeLine) {
+        map.removeLayer(routeLine);
+        routeLine = null;
+        routeButton.textContent = "Iniciar ruta demo";
+        routeButton.setAttribute("aria-pressed","false");
+        routeStatus.textContent = "El trazo de demostración no es un track GPS ni sigue caminos reales.";
+        return;
+      }
+      activeFilter = "all";
+      document.getElementById("placeSearch").value = "";
+      document.querySelectorAll(".atlas-filter[data-filter]").forEach(filter => {
+        const active = filter.dataset.filter === activeFilter;
+        filter.classList.toggle("active",active);
+        filter.setAttribute("aria-pressed",String(active));
+      });
+      renderList();
+      const demoPoints = places.filter(place => place.demo && !place.locked);
+      routeLine = L.polyline(demoPoints.map(place => [place.lat,place.lng]),{
+        className:"demo-route",
+        color:"#a64b37",
+        weight:4,
+        opacity:.9,
+        dashArray:"9 10",
+        lineCap:"round",
+        interactive:false
+      }).addTo(map);
+      routeLine.bindTooltip("RECORRIDO FICTICIO · NO GPS",{sticky:true});
+      routeLine.bringToFront();
+      map.fitBounds(routeLine.getBounds(),{padding:[55,55],maxZoom:9,animate:true});
+      routeButton.textContent = "Quitar ruta demo";
+      routeButton.setAttribute("aria-pressed","true");
+      routeStatus.textContent = "Recorrido demo activo. El trazo es ficticio, no sigue caminos y no sirve para navegar.";
+    });
+    const syncMobileRouteStartButton = () => {
+      const active = routeButton.getAttribute("aria-pressed") === "true";
+      mobileRouteStartButton.setAttribute("aria-pressed",String(active));
+      mobileRouteStartButton.setAttribute("aria-label",active ? "Detener recorrido de demostración" : "Iniciar recorrido de demostración");
+    };
+    routeButton.addEventListener("click",syncMobileRouteStartButton);
+    mobileRouteStartButton.addEventListener("click",() => routeButton.click());
+    if (new URLSearchParams(location.search).get("startDemoRoute") === "1") routeButton.click();
+    map.on("popupopen",event => {
+      const button = event.popup.getElement().querySelector(".poi-action[data-place]");
+      if (button) button.addEventListener("click",() => showToast("Ficha de referencia: valida accesos, coordenadas y condiciones con el guía antes de viajar."));
+    });
+    function showToast(message) {
+      const toast = document.getElementById("toast");
+      toast.textContent = message;
+      toast.classList.add("show");
+      window.clearTimeout(showToast.timeout);
+      showToast.timeout = window.setTimeout(() => toast.classList.remove("show"),3500);
+    }
+    document.getElementById("navMenuButton").addEventListener("click",event => {
+      const open = document.getElementById("siteLinks").classList.toggle("open");
+      event.currentTarget.setAttribute("aria-expanded",String(open));
+      event.currentTarget.setAttribute("aria-label",open ? "Cerrar menú" : "Abrir menú");
+      event.currentTarget.textContent = open ? "×" : "☰";
+    });
+    document.querySelectorAll("#siteLinks a").forEach(link => link.addEventListener("click",() => {
+      document.getElementById("siteLinks").classList.remove("open");
+      const button = document.getElementById("navMenuButton");
+      button.setAttribute("aria-expanded","false");
+      button.setAttribute("aria-label","Abrir menú");
+      button.textContent = "☰";
+    }));
+    const header = document.querySelector(".site-header");
+    const updateHeader = () => header.classList.toggle("scrolled",window.scrollY > 12);
+    updateHeader();
+    window.addEventListener("scroll",updateHeader,{passive:true});
+    window.addEventListener("resize",() => map.invalidateSize());
+    window.setTimeout(() => map.invalidateSize(),150);
+  </script>
+</body>
+</html>

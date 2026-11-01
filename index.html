@@ -1,0 +1,882 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#111b16">
+  <meta name="description" content="Zurita5ur: una familia, miles de kilómetros y un mapa para descubrir y cuidar la Gran Sabana.">
+  <title>Zurita5ur — La Gran Sabana, nuestra ruta</title>
+  <link rel="stylesheet" href="assets/app.css">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700;800&family=DM+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --ink: #1c241e;
+      --muted: #6b7068;
+      --forest: #111b16;
+      --forest-soft: #24352b;
+      --lime: #d2ae58;
+      --sand: #e6dece;
+      --paper: #f3efe5;
+      --accent: #a64b37;
+      --accent-deep: #803627;
+      --line: rgba(41, 60, 52, .12);
+      --serif: Georgia, "Times New Roman", serif;
+      --display: "Barlow Condensed", Impact, sans-serif;
+      --sans: "DM Sans", Inter, ui-sans-serif, system-ui, sans-serif;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; scroll-padding-top: 84px; }
+    body { margin: 0; background: #f0ece3; color: var(--ink); font-family: var(--sans); }
+    button, input { font: inherit; }
+    button, a { -webkit-tap-highlight-color: transparent; }
+    a { color: inherit; text-decoration: none; }
+    img { display: block; max-width: 100%; }
+    .wrap { width: min(1180px, calc(100% - 48px)); margin-inline: auto; }
+    .eyebrow { display: inline-flex; align-items: center; gap: 9px; color: var(--forest-soft); font-size: 11px; font-weight: 800; letter-spacing: .16em; text-transform: uppercase; }
+    .eyebrow::before { width: 22px; height: 1px; background: currentColor; content: ""; }
+    .section-heading { max-width: 690px; margin: 0 0 38px; }
+    .section-heading h2 { margin: 14px 0 12px; font: 700 clamp(36px, 5vw, 58px)/1.08 var(--display); letter-spacing: -.035em; }
+    .section-heading p { max-width: 580px; margin: 0; color: var(--muted); font-size: 15px; line-height: 1.75; }
+    .button { min-height: 48px; display: inline-flex; align-items: center; justify-content: center; gap: 10px; padding: 0 21px; border: 1px solid transparent; border-radius: 999px; background: var(--lime); color: var(--forest); font-size: 13px; font-weight: 800; cursor: pointer; transition: transform .2s, background .2s,box-shadow .2s; }
+    .button:hover { transform: translateY(-2px); background: #e5f69e; box-shadow: 0 10px 20px rgba(23,37,31,.18); }
+    .button-dark { background: var(--forest); color: white; }
+    .button-dark:hover { background: var(--forest-soft); }
+    .button-ghost { border-color: rgba(255,255,255,.4); background: transparent; color: white; }
+    .button-ghost:hover { background: rgba(255,255,255,.1); }
+    .text-link { display: inline-flex; align-items: center; gap: 9px; font-size: 13px; font-weight: 800; }
+    .text-link span { font-size: 18px; transition: transform .2s; }
+    .text-link:hover span { transform: translateX(4px); }
+
+    .hero { position: relative; min-height: 670px; display: flex; align-items: flex-end; overflow: hidden; background: var(--forest); color: white; }
+    .hero::before { position: absolute; inset: 0; background: linear-gradient(90deg, rgba(13,25,20,.88) 0%, rgba(13,25,20,.65) 42%, rgba(13,25,20,.14) 100%), linear-gradient(0deg, rgba(13,25,20,.46), transparent 58%); content: ""; }
+    .hero-image { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: center 54%; opacity: .92; filter: saturate(.9) contrast(1.08); transform: scale(1.04); }
+    .hero-content { position: relative; z-index: 1; width: min(1180px, calc(100% - 48px)); margin: 0 auto; padding: 86px 0 76px; }
+    .hero .eyebrow { color: var(--lime); }
+    .hero h1 { max-width: 760px; margin: 22px 0 19px; font: 700 clamp(52px, 8vw, 96px)/.9 var(--display); letter-spacing: -.04em; }
+    .hero h1 em { color: var(--lime); font-weight: 400; }
+    .hero-copy { max-width: 530px; margin: 0; color: rgba(255,255,255,.82); font-size: 15px; line-height: 1.8; }
+    .hero-actions { display: flex; flex-wrap: wrap; gap: 11px; margin-top: 29px; }
+    .hero-note { display: flex; align-items: center; gap: 11px; margin-top: 40px; color: rgba(255,255,255,.75); font-size: 11px; letter-spacing: .07em; }
+    .hero-note strong { color: white; font-size: 12px; }
+    .hero-note .dot { width: 5px; height: 5px; border-radius: 50%; background: var(--lime); }
+    .hero-number { position: absolute; right: 0; bottom: 76px; color: rgba(255,255,255,.78); font: italic 15px var(--serif); writing-mode: vertical-rl; }
+
+    .proof-strip { border-bottom: 1px solid var(--line); background: #e9e2d3; }
+    .proof-grid { display: grid; grid-template-columns: repeat(4, 1fr); }
+    .proof-item { min-height: 103px; display: flex; align-items: center; gap: 15px; padding: 20px 23px; border-right: 1px solid rgba(23,37,31,.12); }
+    .proof-item:first-child { padding-left: 0; }
+    .proof-item:last-child { border: 0; }
+    .proof-item strong { font: 500 26px var(--serif); letter-spacing: -.04em; }
+    .proof-item span { max-width: 130px; color: var(--muted); font-size: 10px; line-height: 1.5; text-transform: uppercase; letter-spacing: .06em; }
+
+    .story { padding: 112px 0 105px; }
+    .story-grid { display: grid; grid-template-columns: 1fr .9fr; gap: min(9vw, 110px); align-items: center; }
+    .story-image { position: relative; min-height: 490px; }
+    .story-image > img { position: absolute; inset: 0; width: 85%; height: 100%; object-fit: cover; border-radius: 12px; box-shadow: 0 22px 50px rgba(23,37,31,.16); }
+    .story-image .stamp { position: absolute; right: 0; bottom: 25px; width: 174px; padding: 20px; background: var(--lime); color: var(--forest); border-radius: 10px; transform: rotate(2deg); box-shadow: 0 16px 32px rgba(23,37,31,.12); }
+    .stamp strong { display: block; font: 500 34px var(--serif); }
+    .stamp span { display: block; margin-top: 5px; font-size: 10px; font-weight: 800; line-height: 1.5; letter-spacing: .08em; text-transform: uppercase; }
+    .story-copy h2 { margin: 15px 0 18px; font: 700 clamp(38px, 5vw, 61px)/1.07 var(--display); letter-spacing: -.035em; }
+    .story-copy p { margin: 0 0 14px; color: var(--muted); font-size: 14px; line-height: 1.85; }
+    .story-copy .text-link { margin-top: 12px; }
+
+    .manifesto { padding: 82px 0; background: linear-gradient(135deg, #24463b 0%, #31594b 100%); color: white; }
+    .manifesto-grid { display: grid; grid-template-columns: .75fr 1.25fr; gap: 72px; align-items: start; }
+    .manifesto .eyebrow { color: var(--lime); }
+    .manifesto h2 { max-width: 470px; margin: 16px 0 0; font: 700 clamp(38px, 4vw, 58px)/.98 var(--display); letter-spacing: -.025em; }
+    .manifesto-copy > p { max-width: 760px; margin: 0 0 25px; color: #d0dad2; font-size: 15px; line-height: 1.75; }
+    .values { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 24px; counter-reset: care-action; }
+    .value { counter-increment: care-action; }
+    .value::before { display: block; margin-bottom: 11px; color: var(--accent); content: "0" counter(care-action); font-size: 10px; font-weight: 800; letter-spacing: .14em; }
+    .value b { display: block; margin-bottom: 8px; color: var(--lime); font: 600 23px/1.1 var(--display); text-transform: uppercase; }
+    .value span { color: #d0dad2; font-size: 13px; line-height: 1.65; }
+
+    .map-section { padding: 112px 0 116px; background: var(--sand); }
+    .map-prototype-archive { display: none; }
+    .map-showcase { padding: 105px 0; background: #e8e4d8; }
+    .showcase-grid { display: grid; grid-template-columns: 1.12fr .88fr; gap: 48px; align-items: center; }
+    .showcase-visual { position: relative; min-height: 510px; overflow: hidden; border-radius: 14px; background: var(--forest); box-shadow: 0 28px 65px rgba(27,38,32,.16); }
+    .showcase-visual > img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; transition: transform .7s; }
+    .showcase-visual:hover > img { transform: scale(1.035); }
+    .showcase-visual::after { position: absolute; inset: 0; background: linear-gradient(180deg,rgba(13,25,20,.03) 14%,rgba(13,25,20,.8) 100%); content: ""; }
+    .showcase-map-card { position: absolute; z-index: 1; top: 24px; right: 24px; width: min(230px, calc(100% - 48px)); padding: 17px; border: 1px solid rgba(255,255,255,.55); border-radius: 8px; background: rgba(251,250,246,.96); box-shadow: 0 8px 26px rgba(0,0,0,.15); }
+    .showcase-map-card small { color: #647069; font-size: 8px; font-weight: 850; letter-spacing: .12em; text-transform: uppercase; }
+    .showcase-map-card strong { display: block; margin-top: 7px; font: 700 21px/1.1 var(--display); }
+    .showcase-map-card span { display: block; margin-top: 7px; color: #68746a; font-size: 10px; line-height: 1.5; }
+    .showcase-map-dots { position: absolute; z-index: 2; top: 54%; left: 47%; width: 16px; height: 16px; border: 3px solid white; border-radius: 50%; background: var(--accent); box-shadow: 0 0 0 7px rgba(116,151,135,.25), 0 3px 14px rgba(0,0,0,.2); }
+    .showcase-caption { position: absolute; z-index: 1; right: 26px; bottom: 25px; left: 26px; display: flex; justify-content: space-between; gap: 20px; align-items: end; color: white; }
+    .showcase-caption small { color: var(--lime); font-size: 9px; font-weight: 850; letter-spacing: .13em; text-transform: uppercase; }
+    .showcase-caption strong { display: block; margin-top: 7px; font: 700 31px/1.1 var(--display); }
+    .showcase-caption span { max-width: 165px; color: rgba(255,255,255,.76); font-size: 10px; line-height: 1.5; text-align: right; }
+    .showcase-copy h2 { margin: 15px 0 15px; font: 700 clamp(38px, 5vw, 58px)/1.08 var(--display); letter-spacing: -.035em; }
+    .showcase-copy > p { margin: 0; color: var(--muted); font-size: 14px; line-height: 1.8; }
+    .showcase-features { display: grid; gap: 13px; margin: 25px 0; }
+    .showcase-feature { display: flex; align-items: flex-start; gap: 12px; }
+    .showcase-feature i { width: 28px; height: 28px; flex: 0 0 28px; display: grid; place-items: center; border-radius: 50%; background: var(--lime); color: var(--forest); font-size: 11px; font-style: normal; font-weight: 900; }
+    .showcase-feature strong { display: block; margin-bottom: 3px; font-size: 11px; }
+    .showcase-feature span { color: var(--muted); font-size: 10px; line-height: 1.5; }
+    .showcase-actions { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+    .whatsapp-float { position: fixed; z-index: 1000; right: 20px; bottom: 20px; width: 48px; height: 48px; display: grid; place-items: center; border: 1px solid rgba(255,255,255,.28); border-radius: 50%; background: #1e9e59; color: white; box-shadow: 0 5px 18px rgba(0,0,0,.32); transition: transform .2s, background .2s, box-shadow .2s; }
+    .whatsapp-float:hover { transform: translateY(-3px); background: #168b4b; }
+    .install-cta { min-height: 36px !important; margin-left: auto; padding-inline: 12px !important; font-size: 10px !important; }
+
+    .crew { padding: 112px 0; }
+    .crew-top { display: flex; justify-content: space-between; gap: 30px; align-items: end; }
+    .crew-top .section-heading { margin-bottom: 38px; }
+    .crew-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 13px; }
+    .crew-card { min-height: 210px; padding: 20px 17px; overflow: hidden; background: var(--sand); }
+    .crew-role { margin-bottom: 30px; color: #788278; font-size: 9px; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; }
+    .crew-card div { padding: 0; }
+    .crew-card h3 { margin: 0 0 6px; font: 700 24px/1.15 var(--display); }
+    .crew-card p { margin: 0; color: var(--muted); font-size: 10px; line-height: 1.6; }
+    .crew-footnote { margin: 21px 0 0; color: var(--muted); font: italic 15px var(--serif); }
+
+    .journal { padding: 105px 0 112px; background: #e7e4da; }
+    .journal .section-heading { margin-bottom: 30px; }
+    .journal-grid { display: grid; grid-template-columns: 1.2fr 1fr 1fr; gap: 14px; }
+    .journal-card { overflow: hidden; background: var(--paper); box-shadow: 0 7px 22px rgba(27,38,32,.045); transition: transform .22s,box-shadow .22s; }
+    .journal-card:hover { transform: translateY(-5px); box-shadow: 0 18px 36px rgba(27,38,32,.13); }
+    .journal-card img { width: 100%; aspect-ratio: 1.35; object-fit: cover; }
+    .journal-card:first-child img { aspect-ratio: 1.65; }
+    .journal-card-body { padding: 19px 20px 22px; }
+    .journal-card-body small { color: #79837a; font-size: 9px; font-weight: 800; letter-spacing: .13em; text-transform: uppercase; }
+    .journal-card h3 { margin: 9px 0 9px; font: 700 24px/1.12 var(--display); }
+    .journal-card p { margin: 0; color: var(--muted); font-size: 11px; line-height: 1.65; }
+    .journal-card .text-link { margin-top: 14px; font-size: 10px; }
+
+    .cta-band { position: relative; overflow: hidden; padding: 78px 0; background: #e6ece4; color: var(--forest); }
+    .cta-map-watermark { position: absolute; z-index: 0; top: 50%; right: 2%; width: min(46vw,760px); height: auto; opacity: .07; transform: translateY(-50%); pointer-events: none; }
+    .cta-layout { position: relative; z-index: 1; display: grid; grid-template-columns: minmax(0,1.05fr) minmax(300px,.85fr); gap: clamp(32px,5vw,72px); align-items: center; }
+    .cta-content { position: relative; z-index: 1; max-width: 700px; }
+    .cta-band .eyebrow { color: var(--accent-deep); }
+    .cta-band h2 { margin: 14px 0 16px; font: 600 clamp(40px,4.2vw,66px)/1 var(--display); letter-spacing: -.02em; text-transform: none; }
+    .cta-band p { max-width: 570px; margin: 0 0 24px; color: #566a60; font-size: 15px; line-height: 1.75; }
+    .cta-photo { position: relative; height: clamp(340px,34vw,500px); margin: 0; overflow: hidden; background: #d7e1d8; }
+    .cta-photo img { width: 100%; height: 100%; object-fit: cover; object-position: center 54%; }
+    .cta-photo figcaption { position: absolute; right: 16px; bottom: 16px; left: 16px; color: white; font-size: 10px; font-weight: 700; letter-spacing: .12em; text-shadow: 0 1px 9px rgba(0,0,0,.4); text-transform: uppercase; }
+
+    .toast { position: fixed; z-index: 40; right: 20px; bottom: 88px; max-width: min(380px,calc(100% - 40px)); padding: 13px 16px; border-radius: 4px; background: var(--forest); color: white; font-size: 11px; line-height: 1.5; box-shadow: 0 9px 30px rgba(0,0,0,.2); opacity: 0; pointer-events: none; transform: translateY(10px); transition: .25s; }
+    .toast.show { opacity: 1; transform: translateY(0); }
+
+    @media (max-width: 900px) {
+      .site-nav { gap: 12px; }
+      .site-links { gap: 14px; }
+      .site-links a { font-size: 10px; }
+      .site-nav > .ui-button { padding-inline: 12px; font-size: 10px; }
+      .story-grid { gap: 50px; }
+      .showcase-grid { grid-template-columns: 1fr; gap: 30px; }
+      .showcase-visual { min-height: 470px; }
+      .crew-grid { grid-template-columns: repeat(3, 1fr); }
+      .crew-card:nth-child(n+4) { display: none; }
+    }
+    @media (max-width: 640px) {
+      .wrap { width: min(100% - 34px, 500px); }
+      .site-header { height: 66px; }
+      .hero { min-height: 660px; }
+      .hero::before { background: linear-gradient(90deg, rgba(13,25,20,.73), rgba(13,25,20,.28)), linear-gradient(0deg, rgba(13,25,20,.8), transparent 80%); }
+      .hero-image { object-position: 55% center; }
+      .hero-content { width: calc(100% - 36px); padding: 85px 0 46px; }
+      .hero h1 { font-size: clamp(52px, 15vw, 76px); }
+      .hero-copy { max-width: 380px; font-size: 13px; }
+      .hero-number { display: none; }
+      .hero-note { flex-wrap: wrap; gap: 8px; margin-top: 29px; font-size: 9px; }
+      .proof-grid { grid-template-columns: 1fr 1fr; }
+      .proof-item { min-height: 82px; padding: 13px 11px; gap: 10px; border-bottom: 1px solid var(--line); }
+      .proof-item:nth-child(2) { border-right: 0; }
+      .proof-item:nth-child(3), .proof-item:nth-child(4) { border-bottom: 0; }
+      .proof-item:first-child { padding-left: 11px; }
+      .proof-item strong { font-size: 23px; }
+      .proof-item span { font-size: 8px; }
+      .story, .map-section, .crew { padding: 77px 0; }
+      .map-showcase { padding: 78px 0; }
+      .showcase-grid { gap: 26px; }
+      .showcase-visual { min-height: 420px; }
+      .showcase-map-card { top: 15px; right: 15px; padding: 14px; }
+      .showcase-caption { right: 17px; bottom: 17px; left: 17px; display: block; }
+      .showcase-caption strong { font-size: 27px; }
+      .showcase-caption span { display: block; margin-top: 7px; text-align: left; }
+      .story-grid { grid-template-columns: 1fr; gap: 35px; }
+      .story-image { min-height: 360px; }
+      .story-image > img { width: 88%; }
+      .story-image .stamp { width: 145px; padding: 15px; }
+      .stamp strong { font-size: 28px; }
+      .section-heading h2 { font-size: 42px; }
+      .manifesto { padding: 72px 0; }
+      .manifesto-grid { grid-template-columns: 1fr; gap: 30px; }
+      .values { grid-template-columns: 1fr; gap: 14px; }
+      .value { display: block; }
+      .value b { margin: 0 0 7px; }
+      .crew-top { display: block; }
+      .crew-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+      .crew-card:nth-child(3) { display: none; }
+      .crew-card { min-height: 190px; padding: 15px 12px; }
+      .crew-role { margin-bottom: 22px; font-size: 8px; }
+      .crew-card h3 { font-size: 20px; }
+      .crew-card p { font-size: 9px; }
+      .journal { padding: 76px 0; }
+      .journal-grid { grid-template-columns: 1fr 1fr; gap: 10px; }
+      .journal-card:first-child { grid-column: 1 / -1; }
+      .journal-card-body { padding: 14px; }
+      .journal-card h3 { font-size: 19px; }
+      .journal-card p { font-size: 10px; }
+      .cta-band { padding: 69px 0; }
+      .cta-map-watermark { top: 50%; right: -16%; width: 84vw; transform: translateY(-50%); }
+      .cta-layout { grid-template-columns: 1fr; gap: 26px; }
+      .cta-photo { height: clamp(300px,88vw,420px); }
+      .whatsapp-float { right: 14px; bottom: 14px; width: 46px; height: 46px; }
+      .toast { right: 12px; bottom: 82px; max-width: calc(100% - 24px); }
+      .install-cta { max-width: 100%; white-space: normal; text-align: center; }
+    }
+
+    .site-header { height: 78px; }
+    .site-nav { width: min(1320px,calc(100% - 64px)); gap: 30px; }
+    .site-brand img { width: 52px; height: 52px; }
+    .site-brand strong { font-size: 14px; letter-spacing: .16em; }
+    .site-brand small { font-size: 9px; }
+    .site-links a { position: relative; font-size: 12px; }
+    .site-links a::after { position: absolute; right: 0; bottom: 4px; left: 0; height: 2px; background: var(--lime); content: ""; transform: scaleX(0); transform-origin: left; transition: transform .2s; }
+    .site-links a:hover::after { transform: scaleX(1); }
+    .site-nav > .ui-button { border-radius: 3px; background: var(--accent); font-size: 11px; letter-spacing: .04em; text-transform: uppercase; }
+    .hero { min-height: min(820px,calc(100svh - 78px)); align-items: flex-end; }
+    .hero::before { background: linear-gradient(90deg,rgba(20,48,39,.72),rgba(20,48,39,.12) 75%),linear-gradient(0deg,rgba(20,48,39,.66),transparent 74%); }
+    .hero-image { filter: saturate(.82) contrast(1.1); }
+    .hero-content { width: min(1320px,calc(100% - 80px)); padding: clamp(70px,10vh,110px) 0 74px; }
+    .hero .eyebrow { font-size: 10px; letter-spacing: .21em; }
+    .hero h1 { max-width: 800px; margin: 24px 0 22px; font-size: clamp(60px,6vw,90px); line-height: .9; letter-spacing: -.025em; text-transform: uppercase; }
+    .hero-copy { max-width: 590px; padding-left: 16px; border-left: 2px solid var(--accent); font-size: 15px; }
+    .hero-actions { margin-top: 30px; }
+    .hero-actions .button { border-radius: 3px; background: var(--accent); text-transform: uppercase; letter-spacing: .04em; }
+    .hero-actions .button-ghost { background: rgba(36,70,59,.3); }
+    .hero-note { margin-top: 35px; text-transform: uppercase; letter-spacing: .13em; }
+    .hero-number { right: 0; bottom: 80px; font-size: 11px; letter-spacing: .16em; text-transform: uppercase; }
+    .proof-strip { background: #e9e2d3; }
+    .proof-grid { width: min(1320px,calc(100% - 64px)); }
+    .proof-item { min-height: 120px; padding-inline: 25px; }
+    .proof-item strong { color: var(--accent-deep); font: 700 34px/.9 var(--display); }
+    .proof-item span { max-width: 150px; font-size: 9px; font-weight: 700; }
+    .section-heading h2,.story-copy h2,.manifesto h2 { font-family: var(--display); text-transform: uppercase; }
+    .story { position: relative; overflow: hidden; padding: clamp(82px,8vw,120px) 0; background: var(--forest); color: white; }
+    .story-map-watermark { position: absolute; z-index: 0; top: -38px; right: -54px; width: min(43vw,540px); height: auto; color: rgba(220,229,197,.1); pointer-events: none; }
+    .story-grid { position: relative; grid-template-columns: 1.15fr .85fr; gap: clamp(48px,8vw,118px); }
+    .story-image { min-height: clamp(490px,54vw,700px); }
+    .story-image > img.story-expedition { width: 100%; height: 100%; border: 1px solid rgba(255,255,255,.18); border-radius: 0; filter: saturate(.82) contrast(1.05); object-position: 52% center; }
+    .story-image::before { position: absolute; z-index: 1; inset: 0; background: linear-gradient(180deg,rgba(20,50,40,.18),transparent 28%,transparent 55%,rgba(20,50,40,.56)); content: ""; pointer-events: none; }
+    .story-photo-label { position: absolute; z-index: 2; top: 20px; left: 20px; padding: 9px 11px; background: var(--lime); color: var(--forest); font-size: 9px; font-weight: 850; letter-spacing: .14em; text-transform: uppercase; }
+    .story-family-frame { position: absolute; z-index: 3; right: 24px; bottom: 83px; width: clamp(145px,18vw,220px); padding: 7px 7px 10px; background: #f5f2ea; color: var(--forest); box-shadow: 0 15px 34px rgba(0,0,0,.32); transform: rotate(3deg); }
+    .story-family-frame img { width: 100%; aspect-ratio: 1.25; object-fit: cover; object-position: center; }
+    .story-family-frame span { display: block; padding: 8px 4px 0; font: 700 16px/1 var(--display); text-transform: uppercase; }
+    .story-image .stamp { z-index: 3; right: auto; bottom: 27px; left: 24px; width: auto; min-width: 190px; padding: 13px 17px; border-left: 3px solid var(--accent); border-radius: 0; background: rgba(27,57,47,.9); color: white; transform: none; box-shadow: none; }
+    .story-image .stamp strong { color: var(--lime); font: 700 38px/.9 var(--display); }
+    .story-image .stamp span { color: rgba(255,255,255,.82); font-size: 9px; }
+    .story-copy { align-self: center; }
+    .story-copy .eyebrow { color: var(--lime); }
+    .story-copy h2 { max-width: 640px; margin: 20px 0 24px; color: white; font-size: clamp(46px,4.7vw,70px); line-height: .98; }
+    .story-copy h2 em { color: var(--lime); font-style: normal; }
+    .story-copy p { max-width: 520px; color: #c1ccc4; font-size: 14px; line-height: 1.85; }
+    .story-copy .text-link { color: var(--lime); text-transform: uppercase; letter-spacing: .08em; }
+    .manifesto { background: linear-gradient(135deg,#24463b,#31594b); }
+    .manifesto h2 { font-size: clamp(42px,3.8vw,58px); line-height: 1.02; text-transform: none; }
+    .value { padding-top: 19px; }
+    .value b { font: 700 29px/.95 var(--display); text-transform: uppercase; }
+    .impact-section { position: relative; isolation: isolate; overflow: hidden; padding: clamp(72px,6vw,104px) 0; background: var(--sand); }
+    .impact-watermark { position: absolute; z-index: 0; top: -8%; right: -5%; width: min(48vw,760px); opacity: .07; pointer-events: none; }
+    .impact-inner { position: relative; z-index: 1; }
+    .impact-head { display: flex; justify-content: space-between; align-items: end; gap: 36px; margin-bottom: 36px; }
+    .impact-head .eyebrow { color: var(--accent-deep); }
+    .impact-head h2 { max-width: 840px; margin: 12px 0 0; font: 600 clamp(40px,3.8vw,62px)/1.04 var(--display); letter-spacing: -.02em; text-transform: none; }
+    .impact-total { min-width: 210px; display: flex; align-items: center; gap: 15px; padding-left: 22px; border-left: 1px solid rgba(41,60,52,.2); }
+    .impact-total strong { font: 700 clamp(54px,4.4vw,72px)/.95 var(--display); }
+    .impact-total span { color: #68736a; font-size: 10px; font-weight: 800; line-height: 1.5; letter-spacing: .08em; text-transform: uppercase; }
+    .impact-content { display: block; }
+    .impact-intro { max-width: 850px; margin: 0 0 30px; color: #5d6d64; font-size: 15px; line-height: 1.75; }
+    .impact-breakdown { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: clamp(28px,3vw,48px); margin: 0; padding: 18px 0 0; list-style: none; border-top: 2px solid var(--accent); }
+    .impact-breakdown li { display: grid; grid-template-columns: 30px 64px minmax(0,1fr); align-items: start; gap: 12px; padding: 8px 0 10px; }
+    .impact-index { padding-top: 3px; color: #8b948b; font-size: 9px; font-weight: 800; letter-spacing: .12em; }
+    .impact-breakdown strong { color: var(--accent-deep); font: 700 30px/.95 var(--display); }
+    .impact-breakdown b { display: block; margin-bottom: 5px; font-size: 12px; text-transform: uppercase; }
+    .impact-breakdown p { margin: 0; color: #6b756d; font-size: 12px; line-height: 1.6; }
+    .impact-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 20px; margin-top: 30px; }
+    .impact-actions .button { border-radius: 2px; background: var(--forest); color: white; font-size: 10px; letter-spacing: .06em; text-transform: uppercase; }
+    .impact-actions .button:hover { background: var(--forest-soft); }
+    .impact-actions .text-link { color: var(--forest); font-size: 10px; }
+    .map-showcase { background: #e9e2d3; }
+    .showcase-grid { grid-template-columns: 1.12fr .88fr; gap: clamp(35px,6vw,82px); }
+    .showcase-visual { min-height: clamp(470px,55vw,680px); border-radius: 0; }
+    .showcase-map-card { top: 27px; right: 27px; padding: 21px; border-radius: 0; }
+    .showcase-map-card strong { font-family: var(--display); text-transform: uppercase; }
+    .showcase-copy h2 { font: 700 clamp(46px,4.4vw,68px)/.94 var(--display); text-transform: uppercase; }
+    .showcase-feature { padding-block: 15px; }
+    .showcase-feature i { color: var(--accent); font: 700 28px/.9 var(--display); }
+    .crew { padding: clamp(90px,11vw,145px) 0; }
+    .crew-grid { gap: 1px; background: rgba(36,70,59,.16); }
+    .crew-card { min-height: 240px; padding: 23px 20px; background: #f5f2ea; }
+    .crew-role { color: var(--accent-deep); }
+    .crew-card h3 { font: 700 33px/.9 var(--display); text-transform: uppercase; }
+    .crew-card p { font-size: 11px; }
+    .journal { background: var(--forest); color: white; }
+    .journal .section-heading p { color: #c1ccc4; }
+    .journal .eyebrow { color: var(--lime); }
+    .journal-grid { gap: 13px; }
+    .journal-card { background: #315347; }
+    .journal-card-body { padding: 22px; }
+    .journal-card-body small { color: var(--lime); }
+    .journal-card h3 { font: 700 34px/.92 var(--display); text-transform: uppercase; }
+    .journal-card p { color: #c1ccc4; }
+    .journal-card .text-link { color: var(--lime); }
+    .cta-band { background: #e6ece4; color: var(--forest); }
+    .cta-band h2 { font-size: clamp(38px,3.8vw,60px); line-height: 1.04; text-transform: none; }
+    .cta-band .button-dark { border-radius: 3px; background: var(--forest); text-transform: uppercase; }
+    .site-footer { background: #1d392f; }
+    @media (max-width: 900px) {
+      .site-nav { gap: 12px; }
+      .site-links { gap: 12px; }
+      .site-links a { font-size: 10px; }
+      .site-nav > .ui-button { padding-inline: 12px; }
+      .showcase-copy h2 { font-size: 58px; }
+      .impact-head { align-items: start; gap: 20px; }
+      .impact-head h2 { font-size: clamp(44px,6vw,62px); }
+      .impact-content { display: block; }
+      .impact-breakdown { grid-template-columns: 1fr; gap: 0; border-top: 1px solid rgba(27,38,32,.2); }
+      .impact-breakdown li { padding: 17px 0; border-top: 0; border-bottom: 1px solid rgba(27,38,32,.17); }
+      .impact-breakdown li:not(:last-child) { border-right: 0; }
+      .cta-layout { grid-template-columns: 1fr; }
+      .cta-photo { height: clamp(340px,48vw,460px); }
+      .impact-total { min-width: 160px; padding-left: 16px; }
+      .crew-grid { grid-template-columns: repeat(3,1fr); }
+    }
+    @media (max-width: 640px) {
+      .site-header { height: 68px; }
+      .site-nav { width: calc(100% - 32px); }
+      .hero { min-height: min(800px,calc(100svh - 68px)); }
+      .hero-content { width: calc(100% - 36px); padding: 80px 0 43px; }
+      .hero h1 { font-size: clamp(54px,13vw,74px); line-height: .9; }
+      .hero-copy { font-size: 13px; }
+      .hero-actions .button { min-height: 45px; padding-inline: 14px; font-size: 10px; }
+      .proof-grid { width: calc(100% - 28px); }
+      .proof-item { min-height: 82px; padding-inline: 10px; gap: 8px; }
+      .proof-item strong { font-size: 31px; }
+      .story-copy h2,.manifesto h2 { font-size: clamp(40px,10vw,52px); }
+      .story-grid { grid-template-columns: 1fr; gap: 35px; }
+      .story-map-watermark { top: 9%; right: -18%; width: 78vw; }
+      .story-image { min-height: 460px; }
+      .story-family-frame { right: 14px; bottom: 77px; width: 155px; }
+      .story-image .stamp { left: 14px; bottom: 20px; min-width: 150px; }
+      .showcase-copy h2 { font-size: 52px; }
+      .impact-section { padding: 70px 0; }
+      .impact-watermark { top: 7%; right: -32%; width: 92vw; opacity: .08; }
+      .impact-head { display: block; margin-bottom: 24px; }
+      .impact-head h2 { font-size: clamp(38px,10vw,52px); }
+      .impact-total { min-width: 0; margin-top: 19px; padding: 0; border: 0; }
+      .impact-total strong { font-size: 61px; }
+      .impact-content { display: block; }
+      .impact-intro { font-size: 12px; }
+      .impact-breakdown li { grid-template-columns: 27px 58px minmax(0,1fr); gap: 9px; padding: 14px 0; }
+      .impact-breakdown strong { font-size: 29px; }
+      .impact-actions { align-items: stretch; flex-direction: column; gap: 13px; }
+      .impact-actions .button { width: 100%; }
+      .crew-grid { grid-template-columns: repeat(2,1fr); }
+      .crew-card { min-height: 180px; }
+      .crew-card:nth-child(n+4) { display: block; }
+      .crew-card h3 { font-size: 27px; }
+      .journal-grid { grid-template-columns: 1fr; }
+      .journal-card:first-child { grid-column: auto; }
+      .journal-card:first-child img,.journal-card img { aspect-ratio: 1.55; }
+      .journal-card h3 { font-size: 30px; }
+      .cta-band h2 { font-size: clamp(36px,10vw,48px); }
+    }
+    @media (min-width: 1440px) {
+      .wrap { width: min(1640px,calc(100% - clamp(64px,8vw,160px))); }
+      .site-nav,.site-footer > div { width: min(1640px,calc(100% - clamp(64px,8vw,160px))); }
+      .site-nav { gap: clamp(30px,2.4vw,52px); }
+      .hero-content { width: min(1640px,calc(100% - clamp(64px,8vw,160px))); }
+      .proof-grid { width: min(1640px,calc(100% - clamp(64px,8vw,160px))); }
+      .hero { min-height: min(820px,calc(100svh - 78px)); }
+      .hero h1 { max-width: 820px; font-size: clamp(64px,4.6vw,88px); line-height: .9; }
+      .story-grid { grid-template-columns: minmax(0,1.05fr) minmax(0,.95fr); gap: clamp(58px,5vw,92px); }
+      .story-image { min-height: clamp(520px,34vw,660px); }
+      .story-map-watermark { right: -7%; width: min(44vw,740px); }
+      .story-copy h2 { max-width: 700px; font-size: clamp(50px,3.8vw,70px); line-height: .98; }
+      .story-copy p { max-width: 690px; font-size: 15px; }
+      .manifesto { padding: clamp(76px,6vw,108px) 0; }
+      .manifesto-grid { gap: clamp(54px,5vw,92px); }
+      .manifesto h2 { font-size: clamp(44px,3.6vw,60px); line-height: 1.02; }
+      .manifesto-copy > p { font-size: 15px; }
+      .value b { font-size: 25px; }
+      .value span { font-size: 14px; }
+      .impact-section { padding: clamp(76px,6vw,108px) 0; }
+      .impact-watermark { top: -10%; right: -7%; width: min(46vw,780px); opacity: .06; }
+      .impact-head { gap: clamp(34px,4vw,64px); margin-bottom: clamp(34px,3vw,52px); }
+      .impact-head h2 { max-width: 940px; font-size: clamp(46px,3.7vw,64px); }
+      .impact-total { min-width: 220px; }
+      .impact-total strong { font-size: clamp(60px,4.2vw,74px); }
+      .impact-total span { font-size: 11px; }
+      .impact-intro { max-width: 880px; font-size: 15px; }
+      .impact-breakdown { gap: clamp(28px,3vw,48px); }
+      .impact-breakdown li { grid-template-columns: 30px 68px minmax(0,1fr); gap: 12px; padding: 8px 0 10px; }
+      .impact-index { font-size: 10px; }
+      .impact-breakdown strong { font-size: 34px; }
+      .impact-breakdown b { font-size: 13px; }
+      .impact-breakdown p { font-size: 14px; }
+      .impact-actions { margin-top: 34px; }
+      .impact-actions .button { min-height: 50px; padding-inline: 22px; font-size: 11px; }
+      .impact-actions .text-link { font-size: 11px; }
+      .section-heading h2 { font-size: clamp(44px,3.8vw,66px); }
+      .crew-card { min-height: 245px; padding: 25px 22px; }
+      .crew-card h3 { font-size: 32px; }
+      .crew-card p { font-size: 12px; }
+      .journal-card-body { padding: 24px; }
+      .journal-card h3 { font-size: 31px; }
+      .journal-card p { font-size: 12px; }
+      .cta-band { padding: clamp(76px,6vw,108px) 0; }
+      .cta-layout { grid-template-columns: minmax(0,1.05fr) minmax(360px,.9fr); gap: clamp(44px,5vw,88px); }
+      .cta-content { max-width: 730px; }
+      .cta-band h2 { max-width: 690px; font-size: clamp(42px,3.6vw,60px); line-height: 1.04; text-transform: none; }
+      .cta-band p { max-width: 620px; font-size: 15px; }
+      .cta-photo { height: clamp(390px,28vw,520px); }
+      .cta-map-watermark { right: 1%; width: min(46vw,760px); opacity: .06; }
+    }
+  </style>
+  <link rel="stylesheet" href="assets/home.css">
+</head>
+<body class="home-page">
+  <header class="site-header">
+    <nav class="site-nav" aria-label="Navegación principal">
+      <a class="site-brand" href="index.html" aria-label="Zurita5ur, inicio" aria-current="page">
+        <img src="assets/zurita-logo.png" alt="">
+        <span><strong>ZURITA5UR</strong><small>Familia · ruta · conservación</small></span>
+      </a>
+      <div class="site-links" id="siteLinks">
+        <a href="historia.html">Nuestra historia</a>
+        <a href="conservacion.html">Conservación</a>
+        <a href="mapa.html">Mapa</a>
+        <a href="comunidad.html">Comunidad</a>
+        <a href="bitacora.html">Bitácora</a>
+        <a href="cuenta.html">Mi cuenta</a>
+      </div>
+      <a class="ui-button" href="mapa.html">Desplegar mapa <span>↗</span></a>
+      <button class="nav-menu-button" id="navMenuButton" type="button" aria-label="Abrir menú" aria-controls="siteLinks" aria-expanded="false">☰</button>
+    </nav>
+  </header>
+
+  <main>
+    <section class="hero" id="inicio">
+      <img class="hero-image" src="assets/174213426200085612.jpg" alt="La familia Zurita comparte una visita a Río de Janeiro">
+      <div class="hero-content">
+        <span class="eyebrow">Familia · ruta · conservación</span>
+        <h1>La aventura<br>también puede<br><em>dejar huella.</em></h1>
+        <p class="hero-copy">Somos los Zurita: cinco viajeros, una Toyota 4x4 y una vida recorriendo Sudamérica. Nuestra casa está en la Gran Sabana; nuestro compromiso, en cada camino.</p>
+        <div class="hero-actions">
+          <a class="button" href="mapa.html">Desplegar mapa <span>↗</span></a>
+          <a class="button button-ghost" href="historia.html">Conoce a la familia</a>
+        </div>
+        <div class="hero-note"><strong>Gran Sabana · Venezuela</strong><span class="dot"></span><span>Aventura en familia</span></div>
+        <div class="hero-number"><small>BASE FAMILIAR</small><strong>Gran Sabana</strong><span>Venezuela</span></div>
+      </div>
+    </section>
+
+    <section class="proof-strip" aria-label="Experiencia de viaje">
+      <div class="proof-grid wrap">
+        <div class="proof-item"><strong>60k+</strong><span>kilómetros por Sudamérica</span></div>
+        <div class="proof-item"><strong>7+</strong><span>países recorridos en familia</span></div>
+        <div class="proof-item"><strong>25</strong><span>años de experiencia como guía</span></div>
+        <div class="proof-item"><strong>18</strong><span>años de expediciones off-road</span></div>
+      </div>
+    </section>
+
+    <section class="story" id="historia">
+      <img class="story-map-watermark" src="assets/latin-america-watermark.svg" alt="" aria-hidden="true">
+      <div class="story-grid wrap">
+        <div class="story-copy">
+          <span class="eyebrow">La familia detrás de cada viaje</span>
+          <h2>La Gran Sabana es casa. <em>Sudamérica, el camino.</em></h2>
+          <p>Somos cinco y viajamos en un Land Cruiser Serie 80. Jairo y Alana nos enseñaron a leer el paisaje; Danelys, Pither y Lucía hicieron de cada salida una historia familiar. Y aunque hemos recorrido más de 60.000 kilómetros, siempre hay una razón para volver a casa.</p>
+          <p>De los desiertos de Atacama a la Patagonia, de la Ruta 40 a la BR-319, hemos atravesado paisajes muy distintos. Nuestros animales también son parte de la tripulación; la Gran Sabana sigue siendo el lugar al que regresamos.</p>
+          <a class="text-link" href="historia.html">Conoce a la tripulación <span>→</span></a>
+        </div>
+        <div class="story-image">
+          <img class="story-expedition" src="assets/174213426300015673.jpg" alt="La familia Zurita recorre un paisaje de roca durante una excursión">
+          <span class="story-photo-label">Excursión · en familia</span>
+          <div class="story-family-frame"><img src="assets/174213393300075878.jpg" alt="La familia posa junta durante una visita"><span>La tripulación completa</span></div>
+          <div class="stamp"><strong>5 Zurita</strong><span>Un apellido.<br>Una tripulación.</span></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="impact-section" id="aporte" aria-labelledby="impactTitle">
+      <div class="impact-inner wrap">
+        <header class="impact-head">
+          <div>
+            <span class="eyebrow">Mapa de expedición · Gran Sabana</span>
+            <h2 id="impactTitle">La ruta, con más contexto.</h2>
+          </div>
+          <span class="impact-label">CARTOGRAFÍA · ZURITA5UR</span>
+        </header>
+        <div class="map-product-grid">
+          <div class="map-art">
+            <div id="homeMap" class="map-live" role="img" aria-label="Mapa topográfico base de la Gran Sabana, Venezuela"></div>
+            <div class="map-art-top"><span>GRAN SABANA / VENEZUELA</span><span class="map-status"><i></i> VISTA PÚBLICA</span></div>
+            <div class="map-art-note">
+              <small>MAPA INTERACTIVO · CAPAS PRIVADAS BLOQUEADAS</small>
+              <strong>El mapa completo requiere acceso.</strong>
+              <span>Esta vista muestra el territorio; los puntos y recorridos propios no se cargan aquí.</span>
+            </div>
+            <span class="map-art-foot">MAPA BASE PÚBLICO · SIN RUTAS NI DATOS PRIVADOS</span>
+          </div>
+          <aside class="impact-purchase">
+            <span class="purchase-kicker">ACCESO POR 90 DÍAS</span>
+            <h3>Mapa completo<br>de la Gran Sabana</h3>
+            <div class="purchase-price"><strong>$15</strong><span>USD</span></div>
+            <p>Una guía interactiva creada desde la experiencia de la familia Zurita en la ruta.</p>
+              <a class="button" href="https://wa.me/584125580049?text=Hola%20Jairo%2C%20quiero%20desbloquear%20el%20mapa%20completo%20de%20la%20Gran%20Sabana%20por%20%2415." target="_blank" rel="noopener">Desbloquear por $15 · WhatsApp <span>↗</span></a>
+            <a class="text-link" href="mapa.html">Ver vista pública <span>→</span></a>
+            <small class="purchase-footnote">El acceso vence 90 días después de su activación.</small>
+          </aside>
+        </div>
+        <div class="impact-copy">
+          <div class="impact-copy-heading">
+            <span class="eyebrow">Así se distribuye el aporte</span>
+            <p>De cada acceso de $15:</p>
+          </div>
+          <ol class="impact-breakdown" aria-label="Distribución de los 15 dólares">
+            <li><span class="impact-index">01</span><strong>$5</strong><div><b>Plataforma web</b><p>Mantenimiento del sitio y del mapa para que puedas consultarlo.</p></div></li>
+            <li><span class="impact-index">02</span><strong>$5</strong><div><b>Autoría del mapa</b><p>Reconoce el trabajo de reunir, organizar y actualizar la información.</p></div></li>
+            <li><span class="impact-index">03</span><strong>$5</strong><div><b>Fondo para letreros</b><p>Apoya la recuperación de señalización en las rutas de la Gran Sabana.</p></div></li>
+          </ol>
+        </div>
+      </div>
+    </section>
+
+    <section class="manifesto" id="conservacion">
+      <div class="manifesto-grid wrap">
+        <div>
+          <span class="eyebrow">Viajar con propósito</span>
+          <h2>Viajar también<br>es cuidar.</h2>
+        </div>
+        <div class="manifesto-copy">
+          <p>Una expedición no termina al llegar al destino. También cuenta cómo cuidamos el lugar, respetamos a quienes lo habitan y dejamos la ruta para quienes vendrán después.</p>
+          <div class="values">
+            <div class="value"><b>Limpiar</b><span>Jornadas de recolección: la familia reporta más de 25 toneladas de residuos recogidas al año.</span></div>
+            <div class="value"><b>Recuperar</b><span>Apoyo al mantenimiento de vías y recuperación de señalización en ruta.</span></div>
+            <div class="value"><b>Compartir</b><span>Turismo local, viajes solidarios y apoyo al arte y la artesanía indígena.</span></div>
+          </div>
+          <a class="text-link" href="conservacion.html">Conoce nuestras acciones <span>→</span></a>
+        </div>
+      </div>
+    </section>
+
+    <section class="journal" id="bitacora">
+      <div class="wrap">
+        <div class="section-heading">
+          <span class="eyebrow">Historias que deja el camino</span>
+          <h2>La bitácora de la familia.</h2>
+          <p>Viajes, aprendizajes y acciones para mantener viva la ruta.</p>
+        </div>
+        <div class="journal-grid">
+          <article class="journal-card"><img src="assets/174213426100090912.jpg" alt="Una viajera descansa sobre una formación rocosa durante el recorrido"><div class="journal-card-body"><small>Gran Sabana · Expedición</small><h3>La primera vez que los tepuyes aparecen en el horizonte</h3><p>Una ruta también se recuerda por sus paradas, su gente y todo lo que aprendemos en el camino.</p>          <a class="text-link" href="bitacora.html">Leer la bitácora <span>→</span></a></div></article>
+          <article class="journal-card"><img src="assets/174213401300033359.jpg" alt="Toyota familiar estacionada en un paisaje abierto"><div class="journal-card-body"><small>Overlanding · 4×4</small><h3>La ruta exige preparación y respeto</h3><p>Equipo, comunicación y decisiones responsables hacen la diferencia en lugares remotos.</p><a class="text-link" href="conservacion.html">Nuestra forma de viajar <span>→</span></a></div></article>
+          <article class="journal-card"><img src="assets/174213393300075878.jpg" alt="La familia Zurita disfruta una visita durante el viaje"><div class="journal-card-body"><small>Comunidad · Viaje</small><h3>Los mejores recuerdos se comparten</h3><p>Amistades, historias y nuevas perspectivas: eso también forma parte de cada expedición.</p><a class="text-link" href="historia.html">Conoce la tripulación <span>→</span></a></div></article>
+        </div>
+      </div>
+    </section>
+
+    <section class="moments" id="momentos" aria-labelledby="momentsTitle">
+      <img class="moments-watermark" src="assets/latin-america-watermark.svg" alt="" aria-hidden="true">
+      <div class="moments-inner wrap">
+        <header class="moments-heading">
+          <span class="eyebrow">Postales de la ruta</span>
+          <h2 id="momentsTitle">Así vivimos los momentos <em>entre destinos.</em></h2>
+          <p>El camino también se hace de familia, paisajes, paradas inesperadas y recuerdos que dan ganas de volver.</p>
+        </header>
+
+        <div class="moments-carousel" id="momentsCarousel" role="region" aria-label="Carrusel de momentos de Zurita5ur">
+          <div class="moments-track" id="momentsTrack" tabindex="0" aria-label="Fotografías del viaje; usa las flechas del teclado para recorrerlas">
+            <figure class="moment-card is-active" role="group" aria-roledescription="diapositiva" aria-label="1 de 8">
+              <div class="moment-photo">
+                <img src="assets/174213393300075878.jpg" alt="La familia Zurita posa durante una visita a unas coloridas escalinatas" loading="lazy">
+                <span class="moment-number">01</span>
+              </div>
+              <figcaption><small>FAMILIA · ENCUENTROS</small><strong>Los viajes también se llenan de momentos compartidos.</strong></figcaption>
+            </figure>
+            <figure class="moment-card" role="group" aria-roledescription="diapositiva" aria-label="2 de 8">
+              <div class="moment-photo">
+                <img src="assets/174213393300034988.jpg" alt="La familia explora un acuario durante una visita" loading="lazy">
+                <span class="moment-number">02</span>
+              </div>
+              <figcaption><small>DESCUBRIR · EN FAMILIA</small><strong>Siempre hay algo nuevo que mirar.</strong></figcaption>
+            </figure>
+            <figure class="moment-card" role="group" aria-roledescription="diapositiva" aria-label="3 de 8">
+              <div class="moment-photo">
+                <img src="assets/174213393300075562.jpg" alt="La familia Zurita durante una visita a Río de Janeiro" loading="lazy">
+                <span class="moment-number">03</span>
+              </div>
+              <figcaption><small>BRASIL · EN FAMILIA</small><strong>Un viaje se queda en la memoria por quienes lo comparten.</strong></figcaption>
+            </figure>
+            <figure class="moment-card" role="group" aria-roledescription="diapositiva" aria-label="4 de 8">
+              <div class="moment-photo">
+                <img src="assets/174213426000020736.jpg" alt="Jairo sostiene un pez junto al agua durante una pausa del viaje" loading="lazy">
+                <span class="moment-number">04</span>
+              </div>
+              <figcaption><small>PAUSA · JUNTO AL AGUA</small><strong>También hay tiempo para detenerse y disfrutar.</strong></figcaption>
+            </figure>
+            <figure class="moment-card" role="group" aria-roledescription="diapositiva" aria-label="5 de 8">
+              <div class="moment-photo">
+                <img src="assets/174213426200024021.jpg" alt="La familia comparte una travesía en una embarcación" loading="lazy">
+                <span class="moment-number">05</span>
+              </div>
+              <figcaption><small>TRAVESÍA · TRIPULACIÓN</small><strong>Cada tramo también es parte de la aventura.</strong></figcaption>
+            </figure>
+            <figure class="moment-card" role="group" aria-roledescription="diapositiva" aria-label="6 de 8">
+              <div class="moment-photo">
+                <img src="assets/174213426200025926.jpg" alt="La familia recorre un paisaje rocoso durante una excursión" loading="lazy">
+                <span class="moment-number">06</span>
+              </div>
+              <figcaption><small>EXCURSIÓN · PAISAJE</small><strong>El paisaje se disfruta mejor sin apuro.</strong></figcaption>
+            </figure>
+            <figure class="moment-card" role="group" aria-roledescription="diapositiva" aria-label="7 de 8">
+              <div class="moment-photo">
+                <img src="assets/174213426300059782.jpg" alt="Alana y Jairo comparten un momento durante el viaje" loading="lazy">
+                <span class="moment-number">07</span>
+              </div>
+              <figcaption><small>COMPAÑEROS · VIDA EN RUTA</small><strong>El camino también se comparte de a dos.</strong></figcaption>
+            </figure>
+            <figure class="moment-card" role="group" aria-roledescription="diapositiva" aria-label="8 de 8">
+              <div class="moment-photo">
+                <img src="assets/174213426300046088.jpg" alt="Lucía descansa en una silla durante una parada" loading="lazy">
+                <span class="moment-number">08</span>
+              </div>
+              <figcaption><small>DESCANSO · PEQUEÑAS AVENTURAS</small><strong>La próxima aventura siempre está cerca.</strong></figcaption>
+            </figure>
+          </div>
+
+          <div class="moments-controls">
+            <div class="moments-control-buttons">
+              <button class="moments-arrow" id="momentsPrevious" type="button" aria-label="Foto anterior">←</button>
+              <button class="moments-pause" id="momentsPause" type="button" aria-label="Pausar el carrusel">Pausar</button>
+              <button class="moments-arrow" id="momentsNext" type="button" aria-label="Foto siguiente">→</button>
+            </div>
+            <div class="moments-dots" role="group" aria-label="Elegir una foto">
+              <button type="button" data-moment-index="0" aria-label="Mostrar foto 1" aria-pressed="true"></button>
+              <button type="button" data-moment-index="1" aria-label="Mostrar foto 2" aria-pressed="false"></button>
+              <button type="button" data-moment-index="2" aria-label="Mostrar foto 3" aria-pressed="false"></button>
+              <button type="button" data-moment-index="3" aria-label="Mostrar foto 4" aria-pressed="false"></button>
+              <button type="button" data-moment-index="4" aria-label="Mostrar foto 5" aria-pressed="false"></button>
+              <button type="button" data-moment-index="5" aria-label="Mostrar foto 6" aria-pressed="false"></button>
+              <button type="button" data-moment-index="6" aria-label="Mostrar foto 7" aria-pressed="false"></button>
+              <button type="button" data-moment-index="7" aria-label="Mostrar foto 8" aria-pressed="false"></button>
+            </div>
+            <span class="moments-counter" id="momentsCounter" aria-live="off">01 / 08</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="site-footer">
+    <div><span><strong>ZURITA5UR</strong> · Pasión, aventura y conservación en familia.</span><span>Gran Sabana · Venezuela</span><span><a href="historia.html">Nuestra historia</a> · <a href="conservacion.html">Conservación</a> · <a href="mapa.html">Mapa</a> · <a href="comunidad.html">Comunidad</a> · <a href="bitacora.html">Bitácora</a> · <a href="cuenta.html">Mi cuenta</a></span></div>
+  </footer>
+  <nav class="mobile-route-dock" aria-label="Navegación rápida">
+    <a class="mobile-dock-item" href="index.html" aria-current="page">
+      <span class="mobile-dock-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="m3 10 9-7 9 7M5 9v11h14V9M9 20v-6h6v6"/></svg></span>
+      <span>Inicio</span>
+    </a>
+    <a class="mobile-dock-item mobile-dock-community" href="comunidad.html" aria-label="Abrir la comunidad">
+      <span class="mobile-dock-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="3"/><path d="M3 20v-1a6 6 0 0 1 12 0v1M16 5.5a3 3 0 0 1 0 5.5M18 14a5 5 0 0 1 3 4.5V20"/></svg></span>
+      <span>Comunidad</span>
+    </a>
+    <a class="mobile-dock-item mobile-dock-map" href="mapa.html?startDemoRoute=1" aria-label="Abrir el mapa e iniciar el recorrido de demostración">
+      <span class="mobile-dock-map-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="m3 6 6-2 6 2 6-2v14l-6 2-6-2-6 2V6Z"/><path d="M9 4v14M15 6v14"/></svg></span>
+      <span>Mapa</span>
+    </a>
+    <a class="mobile-dock-item mobile-dock-account" href="cuenta.html">
+      <span class="mobile-dock-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="3.5"/><path d="M5 20v-1a7 7 0 0 1 14 0v1"/></svg></span>
+      <span>Mi cuenta</span>
+    </a>
+    <a class="mobile-dock-item mobile-dock-whatsapp" href="https://wa.me/584125580049?text=Hola%20Jairo%2C%20vi%20la%20web%20de%20Zurita5ur%20y%20quiero%20conocer%20m%C3%A1s%20sobre%20la%20Gran%20Sabana." target="_blank" rel="noopener" aria-label="Escribir a Jairo por WhatsApp">
+      <span class="mobile-dock-icon" aria-hidden="true"><img src="assets/whatsapp.svg" alt=""></span>
+      <span>WhatsApp</span>
+    </a>
+  </nav>
+  <a class="whatsapp-float" id="whatsappFloat" href="https://wa.me/584125580049?text=Hola%20Jairo%2C%20vi%20la%20web%20de%20Zurita5ur%20y%20quiero%20conocer%20m%C3%A1s%20sobre%20la%20Gran%20Sabana." target="_blank" rel="noopener" aria-label="Escribir a Jairo por WhatsApp">
+    <img src="assets/whatsapp.svg" alt="">
+  </a>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+  <script>
+    const homeMapElement = document.getElementById("homeMap");
+    if (!window.L || !homeMapElement) throw new Error("No se pudo inicializar la vista pública del mapa.");
+    const homeMap = L.map(homeMapElement, {
+      zoomControl: false,
+      scrollWheelZoom: false,
+      doubleClickZoom: false,
+      dragging: false,
+      touchZoom: false,
+      boxZoom: false,
+      keyboard: false
+    }).setView([5.12, -61.25], 8);
+    L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}", {
+      maxZoom: 19,
+      attribution: 'Tiles &copy; <a href="https://www.esri.com/">Esri</a> &mdash; Sources: Esri, USGS, NOAA, OpenStreetMap contributors'
+    }).addTo(homeMap);
+    window.addEventListener("resize", () => homeMap.invalidateSize(), { passive: true });
+
+    const navLinks = document.getElementById("siteLinks");
+    const menuToggle = document.getElementById("navMenuButton");
+    const topbar = document.querySelector(".site-header");
+    const updateTopbar = () => topbar.classList.toggle("scrolled", window.scrollY > 12);
+    updateTopbar();
+    window.addEventListener("scroll", updateTopbar, { passive: true });
+    menuToggle.addEventListener("click", () => {
+      const open = navLinks.classList.toggle("open");
+      menuToggle.setAttribute("aria-expanded", String(open));
+      menuToggle.setAttribute("aria-label", open ? "Cerrar menú" : "Abrir menú");
+      menuToggle.textContent = open ? "\u00d7" : "\u2630";
+    });
+    navLinks.querySelectorAll("a").forEach((link) => link.addEventListener("click", () => {
+      navLinks.classList.remove("open");
+      menuToggle.setAttribute("aria-expanded", "false");
+      menuToggle.setAttribute("aria-label", "Abrir menú");
+      menuToggle.textContent = "\u2630";
+    }));
+
+    const momentsCarousel = document.getElementById("momentsCarousel");
+    if (momentsCarousel) {
+      const momentsTrack = document.getElementById("momentsTrack");
+      const momentSlides = Array.from(momentsTrack.querySelectorAll(".moment-card"));
+      const momentDots = Array.from(momentsCarousel.querySelectorAll("[data-moment-index]"));
+      const momentsCounter = document.getElementById("momentsCounter");
+      const momentsPause = document.getElementById("momentsPause");
+      const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+      let activeMoment = 0;
+      let paused = reducedMotion.matches;
+      let focusPaused = false;
+      let carouselVisible = false;
+      let autoplayTimer = null;
+      let scrollFrame = 0;
+
+      function setActiveMoment(index) {
+        activeMoment = (index + momentSlides.length) % momentSlides.length;
+        momentSlides.forEach((slide, slideIndex) => {
+          slide.classList.toggle("is-active", slideIndex === activeMoment);
+          slide.setAttribute("aria-label", `${slideIndex + 1} de ${momentSlides.length}`);
+        });
+        momentDots.forEach((dot, dotIndex) => {
+          dot.setAttribute("aria-pressed", String(dotIndex === activeMoment));
+          dot.setAttribute("aria-label", `Mostrar foto ${dotIndex + 1} de ${momentSlides.length}`);
+        });
+        momentsCounter.textContent = `${String(activeMoment + 1).padStart(2, "0")} / ${String(momentSlides.length).padStart(2, "0")}`;
+      }
+
+      function goToMoment(index) {
+        setActiveMoment(index);
+        const slide = momentSlides[activeMoment];
+        const trackRect = momentsTrack.getBoundingClientRect();
+        const slideRect = slide.getBoundingClientRect();
+        const slideLeft = momentsTrack.scrollLeft + slideRect.left - trackRect.left;
+        const target = slideLeft - (momentsTrack.clientWidth - slideRect.width) / 2;
+        const maxScroll = momentsTrack.scrollWidth - momentsTrack.clientWidth;
+        momentsTrack.scrollTo({
+          left: Math.max(0, Math.min(maxScroll, target)),
+          behavior: reducedMotion.matches ? "auto" : "smooth"
+        });
+      }
+
+      function syncActiveMoment() {
+        const trackCenter = momentsTrack.getBoundingClientRect().left + momentsTrack.clientWidth / 2;
+        const closestIndex = momentSlides.reduce((closest, slide, index) => {
+          const rect = slide.getBoundingClientRect();
+          const distance = Math.abs(rect.left + rect.width / 2 - trackCenter);
+          return distance < closest.distance ? {index, distance} : closest;
+        }, {index:activeMoment, distance:Infinity}).index;
+        setActiveMoment(closestIndex);
+      }
+
+      function stopAutoplay() {
+        window.clearInterval(autoplayTimer);
+        autoplayTimer = null;
+      }
+
+      function startAutoplay() {
+        if (paused || !carouselVisible || document.hidden || autoplayTimer !== null || momentsCarousel.matches(":hover") || (focusPaused && momentsCarousel.contains(document.activeElement))) return;
+        autoplayTimer = window.setInterval(() => goToMoment(activeMoment + 1), 5200);
+      }
+
+      function resetAutoplay() {
+        stopAutoplay();
+        startAutoplay();
+      }
+
+      function updatePauseButton() {
+        momentsPause.textContent = paused ? "Reanudar" : "Pausar";
+        momentsPause.setAttribute("aria-label", paused ? "Reanudar el carrusel" : "Pausar el carrusel");
+      }
+
+      momentsPause.addEventListener("click", () => {
+        paused = !paused;
+        updatePauseButton();
+        if (paused) stopAutoplay();
+        else {
+          focusPaused = false;
+          startAutoplay();
+        }
+      });
+      document.getElementById("momentsPrevious").addEventListener("click", () => {
+        goToMoment(activeMoment - 1);
+        resetAutoplay();
+      });
+      document.getElementById("momentsNext").addEventListener("click", () => {
+        goToMoment(activeMoment + 1);
+        resetAutoplay();
+      });
+      momentDots.forEach(dot => dot.addEventListener("click", () => {
+        goToMoment(Number(dot.dataset.momentIndex));
+        resetAutoplay();
+      }));
+      momentsTrack.addEventListener("scroll", () => {
+        window.cancelAnimationFrame(scrollFrame);
+        scrollFrame = window.requestAnimationFrame(syncActiveMoment);
+      }, {passive:true});
+      momentsTrack.addEventListener("keydown", event => {
+        if (event.key !== "ArrowLeft" && event.key !== "ArrowRight") return;
+        event.preventDefault();
+        goToMoment(activeMoment + (event.key === "ArrowRight" ? 1 : -1));
+        resetAutoplay();
+      });
+      momentsCarousel.addEventListener("mouseenter", stopAutoplay);
+      momentsCarousel.addEventListener("mouseleave", startAutoplay);
+      momentsCarousel.addEventListener("focusin", () => {
+        focusPaused = true;
+        stopAutoplay();
+      });
+      momentsCarousel.addEventListener("focusout", () => {
+        if (!momentsCarousel.contains(document.activeElement)) {
+          focusPaused = false;
+          startAutoplay();
+        }
+      });
+      document.addEventListener("visibilitychange", () => {
+        if (document.hidden) stopAutoplay();
+        else startAutoplay();
+      });
+      window.addEventListener("resize", () => goToMoment(activeMoment), {passive:true});
+      updatePauseButton();
+      if ("IntersectionObserver" in window) {
+        const momentsVisibility = new IntersectionObserver(([entry]) => {
+          carouselVisible = entry.isIntersecting;
+          if (carouselVisible) startAutoplay();
+          else stopAutoplay();
+        }, {threshold:.25});
+        momentsVisibility.observe(momentsCarousel);
+      } else {
+        carouselVisible = true;
+        startAutoplay();
+      }
+    }
+  </script>
+</body>
+</html>
